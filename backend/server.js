@@ -17,6 +17,7 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/products', require('./routes/products'));
 app.use('/api/users', require('./routes/users'));
 app.use('/api/orders', require('./routes/orders'));
+app.use('/api/slots', require('./routes/slots'));
 
 // Error handling middleware
 app.use(require('./middleware/errorHandler'));

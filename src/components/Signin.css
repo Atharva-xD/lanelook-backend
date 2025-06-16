@@ -18,7 +18,7 @@
   padding: 30px;
   border-radius: 8px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-  position: relative; /* Added to establish a positioning context */
+  position: relative;
 }
 
 .signin-form h2 {
@@ -98,11 +98,8 @@
   width: 100%;
   height: 100%;
   backdrop-filter: blur(10px);
-  /* Safari support */
   -webkit-backdrop-filter: blur(10px);
-  /* Optional styling */
   background-color: rgba(0, 0, 0, 0.7);
-  /* Semi-transparent background */
   z-index: 2000;
 }
 

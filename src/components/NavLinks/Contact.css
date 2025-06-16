@@ -1,7 +1,7 @@
 .contact-wrapper {
   max-width: 1200px;
   margin: auto;
-  padding: 40px;
+  padding: 40px 20px;
   font-family: 'Poppins', sans-serif;
   color: #1a1a1a;
 }
@@ -30,6 +30,7 @@
   font-size: 2rem;
   font-weight: 700;
   margin-bottom: 10px;
+  line-height: 1.2;
 }
 
 .description {
@@ -37,12 +38,14 @@
   font-size: 1rem;
   max-width: 600px;
   margin: auto;
+  line-height: 1.6;
 }
 
 .descriptiontwo {
   color: #666;
   font-size: 1rem;
   max-width: 600px;
+  line-height: 1.6;
 }
 
 .contact-cards {
@@ -60,11 +63,8 @@
   text-align: center;
   transition: all 0.3s ease;
   display: flex;
-  /* Use flexbox */
   flex-direction: column;
-  /* Stack children vertically */
   align-items: center;
-  /* Center children horizontally */
 }
 
 .contact-card .icon {
@@ -72,11 +72,11 @@
   width: 32px;
   height: 32px;
   margin-bottom: 10px;
-  /* Remove any margin that could offset the icon */
 }
 
 .contact-card:hover {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.07);
+  transform: translateY(-2px);
 }
 
 .contact-card h3 {
@@ -87,6 +87,7 @@
 .contact-card p {
   font-size: 0.95rem;
   color: #555;
+  line-height: 1.5;
 }
 
 .contact-card a {
@@ -95,38 +96,32 @@
   color: #9c5820;
   font-weight: 500;
   text-decoration: none;
+  word-break: break-all;
 }
 
 .promo-container {
   display: flex;
   flex-direction: column;
-  /* Stack items vertically on smaller screens */
-  padding: 40px;
+  padding: 40px 20px;
   align-items: center;
-  /* Center items horizontally */
   gap: 20px;
-  /* Adjust gap for better spacing */
 }
 
 .promo-section {
   background-color: #e5effe;
-  /* Light background color */
   border-radius: 12px;
   margin-bottom: 60px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  /* Add shadow for depth */
 }
 
 .promo-text {
   text-align: center;
-  /* Center text for better appearance on small screens */
 }
 
 .promo-subtitle {
   text-transform: uppercase;
   font-size: 0.85rem;
   color: #dc2626;
-  /* Change color to make it stand out */
   letter-spacing: 1px;
   font-weight: 600;
   margin-bottom: 10px;
@@ -134,86 +129,55 @@
 
 .promo-text h2 {
   font-size: 1.8rem;
-  /* Adjust font size for better readability */
   font-weight: 700;
   margin-bottom: 15px;
   color: #1f2937;
-  /* Darker color for the main heading */
+  line-height: 1.3;
 }
 
 .promo-text p {
   font-size: 1rem;
   color: #555;
   margin-bottom: 20px;
-  /* Add margin for spacing */
+  line-height: 1.6;
 }
 
 .promo-btn {
   margin-top: 15px;
   padding: 12px 24px;
-  /* Increase padding for a more button-like appearance */
   background-color: #1f2937;
-  /* Dark background for the button */
   color: white;
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  transition: background 0.3s ease;
+  transition: all 0.3s ease;
   font-size: 1rem;
-  /* Increase font size */
   font-weight: 600;
-  /* Make button text bold */
+  min-width: 120px;
 }
 
 .promo-btn:hover {
   background-color: #111827;
-  /* Darker shade on hover */
+  transform: translateY(-1px);
 }
 
 .promo-image {
   max-width: 100%;
-  /* Make image responsive */
   height: auto;
-  /* Maintain aspect ratio */
   border-radius: 8px;
-  /* Rounded corners for the image */
-}
-
-/* Media Queries for Responsiveness */
-@media (min-width: 768px) {
-  .promo-container {
-    flex-direction: row;
-    /* Change to row layout on larger screens */
-    justify-content: space-between;
-    /* Space between text and image */
-  }
-
-  .promo-text {
-    flex: 1;
-    /* Allow text to take up available space */
-    min-width: 280px;
-    /* Minimum width for text */
-    text-align: left;
-    /* Align text to the left for larger screens */
-  }
-
-  .promo-image {
-    max-width: 300px;
-    /* Set a max width for the image */
-  }
 }
 
 .faq-section {
   margin-top: 60px;
   padding: 40px 20px;
   background: #f3f4f6;
-  /* Light background for contrast */
   border-radius: 12px;
   text-align: center;
 }
 
 .faq-container {
   max-width: 1200px;
+  margin: 0 auto;
 }
 
 .faq-section .subheading {
@@ -229,6 +193,7 @@
   font-size: 2rem;
   font-weight: 700;
   margin-bottom: 10px;
+  line-height: 1.2;
 }
 
 .faq-section .description {
@@ -237,7 +202,7 @@
   max-width: 600px;
   margin: auto;
   margin-bottom: 30px;
-  /* Add margin for spacing */
+  line-height: 1.6;
 }
 
 .faq-grid {
@@ -249,34 +214,32 @@
 
 .faq-item {
   background: #ffffff;
-  /* White background for each item */
   border: 1px solid #e5e7eb;
-  /* Light border */
   border-radius: 8px;
   padding: 20px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  /* Add shadow for depth */
   transition: transform 0.3s ease;
-  /* Smooth transition for hover effect */
+  text-align: left;
 }
 
 .faq-item:hover {
   transform: translateY(-5px);
-  /* Lift effect on hover */
 }
 
 .faq-item h4 {
   font-size: 1.1rem;
   font-weight: 600;
   margin-bottom: 8px;
+  line-height: 1.4;
 }
 
 .faq-item p {
   color: #555;
   font-size: 0.95rem;
+  line-height: 1.5;
 }
 
-.form-section {
+.contact-form-section {
   margin-top: 60px;
   padding: 40px 20px;
   background: #f3f4f6;
@@ -284,15 +247,17 @@
   text-align: center;
 }
 
-.form-section h2 {
+.contact-form-section h2 {
   font-size: 1.8rem;
   margin-bottom: 10px;
   font-weight: 600;
+  line-height: 1.3;
 }
 
-.form-section h3 {
+.contact-form-section h3 {
   font-size: 1.3rem;
   margin-bottom: 20px;
+  line-height: 1.3;
 }
 
 .contact-form {
@@ -311,6 +276,7 @@
   font-size: 1rem;
   font-family: inherit;
   outline: none;
+  transition: border-color 0.3s ease;
 }
 
 .contact-form input:focus,
@@ -327,15 +293,208 @@
   border-radius: 8px;
   font-size: 1rem;
   cursor: pointer;
-  transition: background 0.3s ease;
+  transition: all 0.3s ease;
+  font-weight: 600;
 }
 
 .contact-form button:hover {
   background: #1f2937;
+  transform: translateY(-1px);
 }
 
 .submit-message {
   margin-top: 16px;
   color: green;
   font-weight: 500;
+}
+
+/* Mobile-First Responsive Design */
+
+/* Small devices (phones, up to 576px) */
+@media (max-width: 576px) {
+  .contact-wrapper {
+    padding: 20px 15px;
+  }
+  
+  .contact-header h1,
+  .faq-section h2 {
+    font-size: 1.5rem;
+  }
+  
+  .contactUs-label {
+    font-size: 0.8rem;
+  }
+  
+  .description,
+  .descriptiontwo {
+    font-size: 0.9rem;
+  }
+  
+  .contact-cards {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin-bottom: 40px;
+  }
+  
+  .contact-card {
+    padding: 16px;
+  }
+  
+  .contact-card h3 {
+    font-size: 1rem;
+  }
+  
+  .contact-card p {
+    font-size: 0.85rem;
+  }
+  
+  .promo-container {
+    padding: 20px 15px;
+    gap: 15px;
+  }
+  
+  .promo-text h2 {
+    font-size: 1.4rem;
+  }
+  
+  .promo-text p {
+    font-size: 0.9rem;
+  }
+  
+  .promo-btn {
+    padding: 10px 20px;
+    font-size: 0.9rem;
+  }
+  
+  .faq-section {
+    padding: 30px 15px;
+    margin-top: 40px;
+  }
+  
+  .faq-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  
+  .faq-item {
+    padding: 16px;
+  }
+  
+  .faq-item h4 {
+    font-size: 1rem;
+  }
+  
+  .faq-item p {
+    font-size: 0.85rem;
+  }
+  
+  .contact-form-section {
+    padding: 30px 15px;
+    margin-top: 40px;
+  }
+  
+  .contact-form-section h2 {
+    font-size: 1.4rem;
+  }
+  
+  .contact-form-section h3 {
+    font-size: 1.1rem;
+  }
+  
+  .contact-form {
+    max-width: 100%;
+  }
+  
+  .contact-form input,
+  .contact-form textarea {
+    padding: 10px 14px;
+    font-size: 0.9rem;
+  }
+  
+  .contact-form button {
+    padding: 10px 16px;
+    font-size: 0.9rem;
+  }
+}
+
+/* Medium devices (tablets, 577px to 768px) */
+@media (min-width: 577px) and (max-width: 768px) {
+  .contact-wrapper {
+    padding: 30px 20px;
+  }
+  
+  .contact-header h1,
+  .faq-section h2 {
+    font-size: 1.75rem;
+  }
+  
+  .contact-cards {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+  
+  .promo-container {
+    padding: 30px 20px;
+  }
+  
+  .promo-text h2 {
+    font-size: 1.6rem;
+  }
+  
+  .faq-section {
+    padding: 35px 20px;
+  }
+  
+  .faq-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .contact-form-section {
+    padding: 35px 20px;
+  }
+  
+  .contact-form-section h2 {
+    font-size: 1.6rem;
+  }
+}
+
+/* Large devices (desktops, 769px and up) */
+@media (min-width: 769px) {
+  .promo-container {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 40px;
+  }
+
+  .promo-text {
+    flex: 1;
+    min-width: 280px;
+    text-align: left;
+    margin-right: 30px;
+  }
+
+  .promo-image {
+    max-width: 300px;
+    flex-shrink: 0;
+  }
+  
+  .contact-cards {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  
+  .faq-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Extra large devices (large desktops, 1200px and up) */
+@media (min-width: 1200px) {
+  .contact-wrapper {
+    padding: 50px 40px;
+  }
+  
+  .promo-container {
+    padding: 50px;
+  }
 }

@@ -117,17 +117,6 @@ const ProductForm = ({ onAddProduct }) => {
           </div>
 
           <div className="form-group">
-            <label htmlFor="description">Description</label>
-            <textarea
-              id="description"
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <div className="form-group">
             <label htmlFor="price">Price (₹)</label>
             <input
               type="number"
@@ -166,6 +155,17 @@ const ProductForm = ({ onAddProduct }) => {
               <option value="screen">Screen Glasses</option>
               <option value="power">Power Glasses</option>
             </select>
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="description">Description</label>
+            <textarea
+              id="description"
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              required
+            />
           </div>
 
           <div className="form-group">

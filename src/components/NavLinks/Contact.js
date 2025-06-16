@@ -6,12 +6,14 @@ import { HelpCircle, MapPin, Phone } from 'lucide-react';
 import { Eye } from "lucide-react";
 import { LuSmile } from "react-icons/lu";
 import { motion } from 'framer-motion'; // Import Framer Motion
+import { usePopup } from "../../context/PopupContext";
 
 const Contact = () => {
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
   const [submitted, setSubmitted] = useState(false);
   const [errors, setErrors] = useState({}); // State to track form validation errors
   const form = useRef(); // Ref for the form to be used with EmailJS
+  const { showSuccess, showError } = usePopup();
 
   const faqData = [
     {
@@ -37,12 +39,16 @@ const Contact = () => {
     {
       question: "How do I choose the right frame for my glasses?",
       answer: "Our stylists can help you pick frames based on your face shape, preferences, and lifestyle."
-    }    
+    }
   ];
 
   // Handle input change
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
   };
 
   // Form validation
@@ -61,30 +67,32 @@ const Contact = () => {
   };
 
   // Handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const validationErrors = validateForm();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors); // Set errors if validation fails
     } else {
-      // Send email using EmailJS
-      emailjs.sendForm('service_kaszvw1', 'template_vegyi9n', form.current, 'veBJ3jhU_ONNTfYFX')
-        .then((result) => {
-          console.log(result.text);
-          alert('Message sent successfully!'); // Success message
-        }, (error) => {
-          console.log(error.text);
-          alert('Failed to send message. Please try again.'); // Error message
+      try {
+        // Send email using EmailJS
+        emailjs.sendForm('service_kaszvw1', 'template_vegyi9n', form.current, 'veBJ3jhU_ONNTfYFX')
+          .then((result) => {
+            console.log(result.text);
+            showSuccess("Your message has been sent successfully!");
+          }, (error) => {
+            console.log(error.text);
+            showError("Failed to send message. Please try again later.");
+          });
+        setFormData({
+          name: "",
+          email: "",
+          message: "",
         });
-
-      // Reset form fields
-      setFormData({
-        name: '',
-        email: '',
-        message: '',
-      });
-      setErrors({});
-      setSubmitted(true); // Set submitted to true after successful submission
+        setErrors({});
+        setSubmitted(true);
+      } catch (error) {
+        showError("Failed to send message. Please try again later.");
+      }
     }
   };
 
@@ -119,24 +127,24 @@ const Contact = () => {
           <LuSmile className='icon' />
           <h3>Chat to Sales</h3>
           <p>Speak to our friendly sales team for assistance with your orders.</p>
-          <a href="mailto:sales@lanelook.com">sales@lanelook.com</a>
+          <a href="mailto:sales@lenslook.com">sales@lenslook.com</a>
         </div>
         <div className="contact-card">
           <HelpCircle className="icon" />
           <h3>Chat to Support</h3>
-          <p>We’re here to help with any issues you may have.</p>
-          <a href="mailto:support@lanelook.com">support@lanelook.com</a>
+          <p>We're here to help with any issues you may have.</p>
+          <a href="mailto:support@lenslook.com">support@lenslook.com</a>
         </div>
         <div className="contact-card">
           <MapPin className="icon" />
           <h3>Visit Us</h3>
           <p>Come visit our office HQ for personalized assistance.</p>
-          <a href="https://maps.google.com" target="_blank" rel="noreferrer">View on Google Maps</a>
+          <a href="https://g.co/kgs/5R2oBeN" target="_blank" rel="noreferrer">View on Google Maps</a>
         </div>
         <div className="contact-card">
           <Phone className="icon" />
           <h3>Call Us</h3>
-          <p>Mon-Fri from 8am to 5pm. We’re just a call away!</p>
+          <p>Mon-Fri from 8am to 5pm. We're just a call away!</p>
           <a href="tel:+911234567899">+91 1234567899</a>
         </div>
       </div>
@@ -197,37 +205,50 @@ const Contact = () => {
       </section>
 
       {/* Contact Form */}
-      <section className="form-section">
-        <h2>DIDN’T FIND THE ANSWER YOU ARE LOOKING FOR?</h2>
+      <section className="contact-form-section">
+        <h2>DIDN'T FIND THE ANSWER YOU ARE LOOKING FOR?</h2>
         <h3>Send Us Your Query</h3>
         <form ref={form} onSubmit={handleSubmit} className="contact-form">
-          <input
-            type="text"
-            name="name"
-            placeholder="Your Name"
-            value={formData.name}
-            onChange={handleChange}
-            required
-          />
-          <input
-            type="email"
-            name="email"
-            placeholder="Your Email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-          />
-          <textarea
-            name="message"
-            placeholder="Your Message"
-            rows="5"
-            value={formData.message}
-            onChange={handleChange}
-            required
-          />
-          <button type="submit">Submit</button>
+          <div className="form-group">
+            <input
+              type="text"
+              id="name"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              required
+              placeholder="Your name"
+            />
+          </div>
+
+          <div className="form-group">
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+              placeholder="Your email"
+            />
+          </div>
+
+          <div className="form-group">
+            <textarea
+              id="message"
+              name="message"
+              value={formData.message}
+              onChange={handleChange}
+              required
+              placeholder="Your message"
+              rows="5"
+            />
+          </div>
+
+          <button type="submit" className="submit-button">
+            Send Message
+          </button>
         </form>
-        {submitted && <p className="submit-message">Thank you! We’ll get back to you soon.</p>}
       </section>
     </div>
   );

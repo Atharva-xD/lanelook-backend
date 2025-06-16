@@ -15,6 +15,7 @@ import OrdersTable from "./components/admin/SidebarComponents/OrdersTable.js";
 import UsersTable from "./components/admin/SidebarComponents/UsersTable.js";
 import ProductsChart from "./components/admin/SidebarComponents/ProductsChart.js";
 import { AuthProvider, useAuth } from "./context/AuthContext";
+import { PopupProvider } from "./context/PopupContext";
 
 // Protected Route component
 const ProtectedRoute = ({ children, requireAdmin = false }) => {
@@ -38,33 +39,28 @@ const ProtectedRoute = ({ children, requireAdmin = false }) => {
 function App() {
   return (
     <AuthProvider>
-      <BrowserRouter>
-        <Navbar />
-        <Routes>
-          <Route exact path="/" element={<Home />} />
-          <Route exact path="/signin" element={<SignIn />} />
-          <Route path="/shop" element={<Shop />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/book" element={<Book />} />
-          <Route 
-            path="/cart" 
-            element={
-              <ProtectedRoute>
-                <ShoppingCart />
-              </ProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/admin/*" 
-            element={
-              <ProtectedRoute requireAdmin={true}>
-                <Admin />
-              </ProtectedRoute>
-            } 
-          />
-        </Routes>
-      </BrowserRouter>
+      <PopupProvider>
+        <BrowserRouter>
+          <Navbar />
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/shop" element={<Shop />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/book" element={<Book />} />
+            <Route path="/signin" element={<SignIn />} />
+            <Route path="/cart" element={<ShoppingCart />} />
+            <Route
+              path="/admin/*"
+              element={
+                <ProtectedRoute requireAdmin={true}>
+                  <Admin />
+                </ProtectedRoute>
+              }
+            />
+          </Routes>
+        </BrowserRouter>
+      </PopupProvider>
     </AuthProvider>
   );
 }

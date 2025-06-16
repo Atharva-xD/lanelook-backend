@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from "react-router-dom";
-import "../index.css";
+import "./Header.css";
 import glasses1 from "../images/glasses1.jpg";
 import glasses2 from "../images/glasses2.jpg";
 import glasses3 from "../images/glasses3.jpg";
@@ -9,65 +9,91 @@ import glasses4 from "../images/glasses4.jpg";
 import { Eye } from "lucide-react";
 
 export class Header extends Component {
+  // Animation variants for staggered product cards
+  containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  cardVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.5
+      }
+    }
+  };
+
+  // Product data for easier maintenance
+  products = [
+    { id: 1, image: glasses1, alt: "glasses1", title: "Eyeglasses" },
+    { id: 2, image: glasses2, alt: "glasses2", title: "Sunglasses" },
+    { id: 3, image: glasses3, alt: "glasses3", title: "Screen Glasses" },
+    { id: 4, image: glasses4, alt: "glasses4", title: "Power Sunglasses" }
+  ];
+
   render() {
     return (
-      <div className='container my-5'>
-
+      <div className='container'>
         {/* --- Best Sellers Header --- */}
-        <div className='d-flex justify-content-between align-items-center flex-wrap mb-4'>
-          <div>
-            <div className="d-flex align-items-center gap-2 mb-2">
+        <motion.div 
+          className='header-section'
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          <div className='header-content'>
+            <div className="header-label">
               <Eye size={16} color="#9c5820" />
-              <span style={{ textTransform: "uppercase", letterSpacing: "1px", fontWeight: "500", color: "#9c5820" }}>
-                Best Sellers
-              </span>
+              <span>Best Sellers</span>
             </div>
-            <h2 style={{ fontWeight: "700", fontSize: "2.2rem", lineHeight: "1.3", color: "#111827" }}>
+            <h2 className="header-title">
               Explore Customer Favorites <br /> in Every Style
             </h2>
           </div>
           <div>
             <Link to="/shop" className="view-all-btn">
-              View All <span style={{ marginLeft: "0.25rem" }}>➔</span>
+              View All <span>➔</span>
             </Link>
           </div>
-        </div>
+        </motion.div>
 
         {/* --- Product Type Cards --- */}
-        <div className='row my-4'>
-          <div className='col-lg-3 col-md-3 col-sm-6'>
-            <motion.div whileHover={{ scale: 1.1 }} className='glasses'>
-              <Link to="/shop" style={{ textDecoration: 'none' }}>
-                <img src={glasses1} alt="glasses1" className='img-fluid' />
-                <h5>Eyeglasses</h5>
+        <motion.div 
+          className='products-grid'
+          variants={this.containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
+          {this.products.map((product) => (
+            <motion.div 
+              key={product.id}
+              className='glasses'
+              variants={this.cardVariants}
+              whileHover={{ 
+                scale: 1.05,
+                transition: { duration: 0.2 }
+              }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <Link to="/shop">
+                <img 
+                  src={product.image} 
+                  alt={product.alt} 
+                  loading="lazy"
+                />
+                <h5>{product.title}</h5>
               </Link>
             </motion.div>
-          </div>
-          <div className='col-lg-3 col-md-3 col-sm-6'>
-            <motion.div whileHover={{ scale: 1.1 }} className='glasses'>
-              <Link to="/shop" style={{ textDecoration: 'none' }}>
-                <img src={glasses2} alt="glasses2" className='img-fluid' />
-                <h5>Sunglasses</h5>
-              </Link>
-            </motion.div>
-          </div>
-          <div className='col-lg-3 col-md-3 col-sm-6'>
-            <motion.div whileHover={{ scale: 1.1 }} className='glasses'>
-              <Link to="/shop" style={{ textDecoration: 'none' }}>
-                <img src={glasses3} alt="glasses3" className='img-fluid' />
-                <h5>Screen Glasses</h5>
-              </Link>
-            </motion.div>
-          </div>
-          <div className='col-lg-3 col-md-3 col-sm-6'>
-            <motion.div whileHover={{ scale: 1.1 }} className='glasses'>
-              <Link to="/shop" style={{ textDecoration: 'none' }}>
-                <img src={glasses4} alt="glasses4" className='img-fluid' />
-                <h5>Power Sunglasses</h5>
-              </Link>
-            </motion.div>
-          </div>
-        </div>
+          ))}
+        </motion.div>
       </div>
     )
   }

@@ -14,8 +14,8 @@ class Home extends React.Component {
       <>
         <HeroSection/>
         {/* <Slider /> */}
-        <WhyChooseUs />
         <About />
+        <WhyChooseUs />
         <Header />
         <Contact />
         <Footer />
