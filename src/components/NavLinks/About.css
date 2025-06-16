@@ -1,0 +1,168 @@
+.eyewear-wrapper {
+  max-width: 1200px;
+  margin: 60px auto;
+  padding: 20px;
+  font-family: 'Poppins', sans-serif;
+}
+
+.eyewear-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 40px;
+}
+
+.eyewear-image-section {
+  flex: 1;
+  position: relative;
+  min-width: 300px;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+.eyewear-image-section img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+}
+
+.eyewear-overlay {
+  position: absolute;
+  bottom: 0;
+  padding: 20px;
+  color: #fff;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.6), transparent);
+}
+
+.eyewear-overlay h2 {
+  font-size: 1.4rem;
+}
+
+.eyewear-overlay p {
+  margin: 10px 0;
+  font-size: 0.95rem;
+}
+
+.eyewear-overlay button {
+  padding: 0.5rem 1.2rem;
+  background-color: #0b66a3;
+  color: white;
+  border: none;
+  border-radius: 9999px;
+  cursor: pointer;
+}
+
+.eyewear-text-section {
+  flex: 1;
+  min-width: 300px;
+}
+
+.eyewear-label {
+  color: #9c5820;
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.eyewear-text-section h1 {
+  font-size: 2rem;
+  color: #111827;
+  margin-bottom: 1rem;
+  line-height: 1.3;
+}
+
+.eyewear-text-section p {
+  color: #4b5563;
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+
+.eyewear-points {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.eyewear-point {
+  display: flex;
+  gap: 1rem;
+}
+
+.check-icon {
+  color: #0b66a3;
+  margin-top: 5px;
+}
+
+.eyewear-point strong {
+  font-weight: 600;
+  color: #111827;
+}
+
+.eyewear-point p {
+  font-size: 0.95rem;
+  color: #4b5563;
+}
+
+/* Brand Logos */
+.eyewear-brands {
+  margin-top: 60px;
+  text-align: center;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 40px;
+}
+
+.eyewear-brands h3 {
+  margin-bottom: 20px;
+  font-size: 1rem;
+}
+
+.eyewear-brands span {
+  color: #9c5820;
+}
+
+.brand-logos {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.brand-logos img {
+  height: 40px;
+  opacity: 0.7;
+  transition: 0.3s;
+}
+
+.brand-logos img:hover {
+  opacity: 1;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .eyewear-grid {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .eyewear-text-section,
+  .eyewear-image-section {
+    width: 100%;
+  }
+
+  .eyewear-text-section h1,
+  .eyewear-label,
+  .eyewear-text-section p {
+    text-align: center;
+  }
+
+  .eyewear-point {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+}

@@ -1,0 +1,151 @@
+/* ProductForm.css */
+.product-form {
+    max-width: 1200px;
+    width: 100%;
+    padding: 30px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    margin: 20px auto; /* Center the form */
+  }
+  
+  .product-form h4 {
+    font-family: "Syne", sans-serif; /* Match the font style */
+    font-size: 2rem;
+    margin-bottom: 25px;
+    text-align: center;
+    color: #333; /* Match the color */
+  }
+  
+  .product-form form {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+  }
+  
+  .form-section {
+    background-color: #f8f9fa;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+  
+  .form-section h3 {
+    font-family: "Syne", sans-serif;
+    font-size: 1.4rem;
+    color: #333;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #ddd;
+  }
+  
+  .form-group {
+    margin-bottom: 20px;
+  }
+  
+  .form-group label {
+    display: block;
+    font-size: 0.95rem;
+    color: #555;
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+  
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus {
+    outline: none;
+    border-color: #333;
+    box-shadow: 0 0 0 2px rgba(51, 51, 51, 0.1);
+  }
+  
+  .form-group textarea {
+    min-height: 100px;
+    resize: vertical;
+  }
+  
+  .submit-btn {
+    padding: 14px 28px;
+    background-color: #333;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1.1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    margin-top: 20px;
+  }
+  
+  .submit-btn:hover {
+    background-color: #444;
+    transform: translateY(-1px);
+  }
+  
+  .submit-btn:active {
+    transform: translateY(0);
+  }
+  
+  .error-message {
+    background-color: #fee;
+    color: #c00;
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    font-size: 0.95rem;
+  }
+  
+  .success-message {
+    background-color: #e6f4ea;
+    color: #1e7e34;
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    font-size: 0.95rem;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .product-form {
+      padding: 20px;
+    }
+  
+    .form-section {
+      padding: 15px;
+    }
+  
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      padding: 10px;
+    }
+  
+    .submit-btn {
+      padding: 12px 24px;
+    }
+  }
+  
+  /* Grid Layout for Larger Screens */
+  @media (min-width: 992px) {
+    .form-section {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+  
+    .form-section h3 {
+      grid-column: 1 / -1;
+    }
+  }

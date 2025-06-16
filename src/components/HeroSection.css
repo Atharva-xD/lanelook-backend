@@ -1,0 +1,150 @@
+.hero-section {
+    background-color: #d9e1ea;
+}
+
+.hero-container {
+    padding: 5rem 1rem;
+    display: flex;
+    flex-direction: column;
+    /* Default to column for smaller screens */
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.hero-content {
+    max-width: 600px;
+    text-align: center;
+    /* margin-bottom: 2rem; */
+}
+
+.hero-eyewear-label {
+    text-transform: uppercase;
+    color: #9c5820;
+    font-size: 0.9rem;
+    letter-spacing: 0.1em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.hero-heading {
+    font-size: 2.5rem;
+    font-weight: bold;
+    line-height: 1.3;
+    color: #111827;
+    margin-bottom: 1rem;
+}
+
+.hero-paragraph {
+    color: #4b5563;
+    margin-bottom: 2rem;
+}
+
+.hero-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+.hero-buttons a {
+    background-color: #000;
+    color: #fff;
+    padding: 0.75rem 1.5rem;
+    border-radius: 9999px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+}
+
+.hero-buttons a:hover {
+    background-color: #fff;
+    color: #000;
+}
+
+.hero-quiz-link {
+    font-size: 0.9rem;
+    color: #0b66a3;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.hero-quiz-link:hover {
+    text-decoration: underline;
+}
+
+.hero-image {
+    display: flex;
+    justify-content: center;
+}
+
+.hero-image img {
+    max-width: 400px;
+    width: 100%;
+}
+
+/* Features Section */
+.features-section {
+    background-color: #10212a;
+}
+
+.features-container {
+    padding: 2.5rem 1rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    text-align: center;
+    margin: 0 auto;
+}
+
+.features-section P {
+    color: #dddddd;
+}
+
+.feature-item {
+    background: #10212a;
+    border-radius: 0.75rem;
+    padding: 2rem 1rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.feature-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.feature-icon {
+    font-size: 2rem;
+    color: #dddddd;
+    margin-bottom: 1rem;
+}
+
+
+/* Media Queries */
+@media (min-width: 1024px) {
+    .hero-container {
+        margin: 10 auto;
+        flex-direction: row;
+        /* Change to row for larger screens */
+        justify-content: space-between;
+        /* Space between text and image */
+    }
+
+    .hero-content {
+        text-align: left;
+        margin: 0;
+    }
+
+    .hero-eyewear-label {
+        justify-content: flex-start;
+    }
+
+    .hero-buttons {
+        justify-content: flex-start;
+    }
+}

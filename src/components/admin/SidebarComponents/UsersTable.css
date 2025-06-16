@@ -1,0 +1,32 @@
+.orders-table,
+.users-table {
+  flex: 1;
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.orders-table table,
+.users-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.orders-table th,
+.users-table th {
+  background-color: #222222;
+  color: white;
+  padding: 10px;
+}
+
+.orders-table td,
+.users-table td {
+  padding: 10px;
+  text-align: center;
+}
+
+.orders-table tr:nth-child(even),
+.users-table tr:nth-child(even) {
+  background-color: #f4f6f8;
+}

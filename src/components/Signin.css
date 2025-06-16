@@ -1,0 +1,144 @@
+/* Signin.css - Updated with fixed cancel icon styling */
+.signIn-topbar:hover {
+  cursor: pointer;
+}
+
+.signin-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.signin-form {
+  width: 100%;
+  max-width: 450px;
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  position: relative; /* Added to establish a positioning context */
+}
+
+.signin-form h2 {
+  color: #333;
+  text-align: center;
+  margin-bottom: 20px;
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+}
+
+.signin-form .form-label {
+  font-weight: 500;
+  color: #333;
+}
+
+.signin-form .form-control {
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 1rem;
+  background-color: #f9f9f9;
+  transition: border-color 0.3s;
+}
+
+.signin-form .form-control:focus {
+  border-color: #333;
+  box-shadow: 0 0 0 0.2rem rgba(51, 51, 51, 0.25);
+}
+
+.signin-button {
+  background-color: #333 !important;
+  border-color: #333 !important;
+  color: #fff !important;
+  padding: 10px 25px !important;
+  font-weight: 500 !important;
+  font-size: 1rem !important;
+  border-radius: 5px !important;
+  transition: all 0.3s !important;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.signin-button:hover {
+  background-color: #555 !important;
+  border-color: #555 !important;
+}
+
+.error {
+  color: #dc3545;
+  font-size: 0.875rem;
+  margin-top: 5px;
+}
+
+.forgot-password {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.forgot-password a {
+  color: #333;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.3s;
+}
+
+.forgot-password a:hover {
+  color: #555;
+  text-decoration: underline;
+}
+
+/* Modal styles */
+.signin-open::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(10px);
+  /* Safari support */
+  -webkit-backdrop-filter: blur(10px);
+  /* Optional styling */
+  background-color: rgba(0, 0, 0, 0.7);
+  /* Semi-transparent background */
+  z-index: 2000;
+}
+
+.signin-overlay {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 500px;
+  background-color: transparent;
+  padding: 30px;
+  border-radius: 10px;
+  z-index: 3000;
+}
+
+.signin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 15px;
+  margin-bottom: 20px;
+}
+
+.signin-header h2 {
+  margin: 0;
+  text-align: left;
+}
+
+.signin-header .cancel-icon {
+  color: #333;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.signin-header .cancel-icon:hover {
+  color: #555;
+}

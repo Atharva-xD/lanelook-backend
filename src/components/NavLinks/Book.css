@@ -1,0 +1,68 @@
+.book-container {
+  max-width: 1200px;
+  padding: 20px;
+  font-family: 'Poppins';
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.book-header h1 {
+  font-family: "Syne";
+  font-size: 2.5rem;
+  margin-bottom: 30px;
+  text-align: center;
+  color: #333;
+}
+
+.book-form {
+  max-width: 600px;
+  width: 100%;
+  padding: 20px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.book-form h2 {
+  font-size: 1.8rem;
+  margin-bottom: 15px;
+  color: #000;
+}
+
+.book-form form {
+  display: flex;
+  flex-direction: column;
+}
+
+.book-form input,
+.book-form textarea,
+.book-form select {
+  padding: 10px;
+  margin: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
+}
+
+.book-form button {
+  padding: 10px 20px;
+  margin: 15px;
+  background-color: #333;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.book-form button:hover {
+  background-color: #555;
+}
+
+.error {
+  color: red;
+  font-size: 0.875rem;
+  margin-top: -10px;
+  margin-bottom: 10px;
+}

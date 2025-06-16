@@ -1,0 +1,129 @@
+/* ShoppingCart.css */
+.shopping-cart-container {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .shopping-cart-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  
+  .cart-items {
+    width: 60%;
+  }
+  
+  .cart-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #e1e1e1;
+    padding: 20px 0;
+  }
+  
+  .item-image {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    margin-right: 20px;
+  }
+  
+  .item-details {
+    flex-grow: 1;
+    margin-right: 20px;
+  }
+  
+  .item-name {
+    font-size: 16px;
+    margin-bottom: 5px;
+  }
+  
+  .item-price {
+    font-weight: bold;
+  }
+  
+  .item-quantity {
+    display: flex;
+    align-items: center;
+    margin-right: 20px;
+  }
+  
+  .item-quantity button {
+    background-color: #ddd;
+    border: 1px solid #ccc;
+    padding: 5px 10px;
+  }
+  
+  .item-quantity input {
+    text-align: center;
+    width: 50px;
+    margin: 0 5px;
+  }
+  
+  .item-total {
+    font-weight: bold;
+    width: 80px;
+    text-align: right;
+  }
+  
+  
+  .cart-summary {
+    width: 35%;
+    border: 1px solid #e1e1e1;
+    padding: 20px;
+  }
+  
+  .subtotal {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  
+  .shipping-info {
+    font-size: 14px;
+    margin-bottom: 20px;
+  }
+  
+  .calculate-shipping {
+    margin-bottom: 20px;
+  }
+  
+  .calculate-shipping p {
+    font-weight: bold;
+  }
+  
+  .calculate-shipping select,
+  .calculate-shipping input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+  }
+  
+  .calculate-shipping button {
+    width: 100%;
+    padding: 10px;
+    background-color: #ddd;
+    border: 1px solid #ccc;
+  }
+  
+  .total {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  
+  .proceed-checkout {
+    width: 100%;
+    padding: 15px;
+    background-color: black;
+    color: white;
+    font-size: 16px;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+  

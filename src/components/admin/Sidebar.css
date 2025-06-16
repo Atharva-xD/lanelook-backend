@@ -1,0 +1,35 @@
+/* Sidebar.css */
+.sidebar {
+    position: fixed !important;
+    top: 50% !important;
+    left: 0 !important;
+    transform: translateY(-50%) !important;
+    width: fit-content !important;
+    min-width: 50px !important;
+    background-color: #222 !important;
+    color: #fff !important;
+    z-index: 1000 !important;
+    /* Modified border radius */
+    border-radius: 0 10px 10px 0 !important; /* Top-right and Bottom-right */
+}
+
+.sidebardiv {
+    width: fit-content !important;
+    height: fit-content !important;
+    background-color: #222 !important;
+    /* Modified border radius */
+    border-radius: 0 10px 10px 0 !important; /* Top-right and Bottom-right */
+}
+
+.menuitem:hover {
+    background-color: #fff !important;
+    color: #222;
+}
+
+.sidebar-icon {
+    transition: transform 0.2s; /* Smooth transition for scaling */
+}
+
+.sidebar-icon:hover {
+    transform: scale(1.5); /* Scale effect on hover */
+}
