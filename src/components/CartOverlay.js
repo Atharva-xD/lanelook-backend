@@ -1,12 +1,24 @@
 import React from 'react';
-import "../index.css";
+import { useSelector, useDispatch } from 'react-redux';
+import { removeFromCart, updateQuantity } from '../redux/slices/cartSlice';
 import { Link } from "react-router-dom";
-import glasses1 from "../images/glasses1.jpg";
-import glasses2 from "../images/glasses2.jpg";
 import { FaTimes } from "react-icons/fa";
 import { motion } from "framer-motion";
+import "../index.css";
 
-function CartOverlay({close}) {
+function CartOverlay({ close }) {
+  const cart = useSelector((state) => state.cart);
+  const dispatch = useDispatch();
+
+  const handleQuantityChange = (id, newQuantity) => {
+    if (newQuantity < 1) return;
+    dispatch(updateQuantity({ id, quantity: newQuantity }));
+  };
+
+  const handleRemoveItem = (id) => {
+    dispatch(removeFromCart(id));
+  };
+
   return (
     <motion.div
       initial={{ x: 300, opacity: 0 }}
@@ -23,49 +35,57 @@ function CartOverlay({close}) {
           />
         </div>
         <div className="cart-item-container">
-          <div className="row">
-            <div className="cart-items">
-              <div className="img col-3 col-md-4">
-                <img
-                  src={glasses1}
-                  alt="glasses1"
-                  className="img-fluid"
-                />
-              </div>
-              <div className="item-details">
-                <p className="p-title">Eyeglasses</p>
-                <p className="p-price">1 x ₹850</p>
-              </div>
+          {cart.items.length === 0 ? (
+            <div className="empty-cart">
+              <p>Your cart is empty</p>
             </div>
-          </div>
-          <div className="row">
-            <div className="cart-items">
-              <div className="img col-3 col-md-4">
-                <img
-                  src={glasses2}
-                  alt="glasses2"
-                  className="img-fluid"
-                />
+          ) : (
+            cart.items.map((item) => (
+              <div key={item._id} className="cart-item">
+                <div className="img col-3 col-md-4">
+                  <img
+                    src={item.image}
+                    alt={item.name}
+                    className="img-fluid"
+                  />
+                </div>
+                <div className="item-details">
+                  <p className="p-title">{item.name}</p>
+                  <p className="p-price">₹{item.price}</p>
+                  <div className="quantity-controls">
+                    <button onClick={() => handleQuantityChange(item._id, item.quantity - 1)}>-</button>
+                    <span>{item.quantity}</span>
+                    <button onClick={() => handleQuantityChange(item._id, item.quantity + 1)}>+</button>
+                  </div>
+                  <button 
+                    className="remove-item"
+                    onClick={() => handleRemoveItem(item._id)}
+                  >
+                    Remove
+                  </button>
+                </div>
               </div>
-              <div className="item-details">
-                <p className="p-title">Eyeglasses</p>
-                <p className="p-price">1 x ₹850</p>
-              </div>
-            </div>
-          </div>
+            ))
+          )}
         </div>
         <div className="cart-footer">
+          <div className="cart-summary">
+            <div className="summary-row">
+              <span>Total Items:</span>
+              <span>{cart.items.length}</span>
+            </div>
+            <div className="summary-row total">
+              <span>Total Amount:</span>
+              <span>₹{cart.total}</span>
+            </div>
+          </div>
           <div className="btns">
-            <button className="btn btn-primary">Checkout</button>
-            <button className="btn btn-secondary">
-              <Link
-                to="/cart"
-                className="text-decoration-none text-white"
-                onClick={close}
-              >
-                View Cart
-              </Link>
-            </button>
+            <Link to="/cart" className="btn btn-primary" onClick={close}>
+              View Cart
+            </Link>
+            <Link to="/book" className="btn btn-secondary" onClick={close}>
+              Book Appointment
+            </Link>
           </div>
         </div>
       </div>

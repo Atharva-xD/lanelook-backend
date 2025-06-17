@@ -1,21 +1,36 @@
 const Slot = require('../models/slots');
 
 // Generate time slots for a given date
-const generateTimeSlots = (date) => {
+const generateTimeSlots = async (date) => {
   const slots = [];
-  const startHour = 9; // 9 AM
-  const endHour = 17; // 5 PM
+  const startTime = new Date(date);
+  startTime.setHours(9, 0, 0, 0); // 9 AM
+  const endTime = new Date(date);
+  endTime.setHours(17, 0, 0, 0); // 5 PM
 
-  for (let hour = startHour; hour < endHour; hour++) {
-    // Add slots for each half hour
-    slots.push({
-      time: `${hour.toString().padStart(2, '0')}:00`,
-      date: date
+  while (startTime < endTime) {
+    const timeString = startTime.toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
     });
-    slots.push({
-      time: `${hour.toString().padStart(2, '0')}:30`,
-      date: date
+
+    // Check if slot already exists
+    const existingSlot = await Slot.findOne({
+      date: date,
+      time: timeString
     });
+
+    if (!existingSlot) {
+      slots.push({
+        date: date,
+        time: timeString,
+        isBooked: false
+      });
+    }
+
+    // Add 30 minutes
+    startTime.setMinutes(startTime.getMinutes() + 30);
   }
 
   return slots;
@@ -23,9 +38,12 @@ const generateTimeSlots = (date) => {
 
 // Get available slots for a date
 const getAvailableSlots = async (req, res) => {
-  const { date } = req.query;
   try {
-    const slots = await Slot.find({ date, isBooked: false });
+    const { date } = req.params;
+    const slots = await Slot.find({
+      date: new Date(date),
+      isBooked: false
+    }).select('time');
     res.json(slots);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -34,57 +52,96 @@ const getAvailableSlots = async (req, res) => {
 
 // Book a slot
 const bookSlot = async (req, res) => {
-  const { date, time, customerName, customerEmail, customerAddress } = req.body;
-  console.log('Received booking request:', { date, time, customerName, customerEmail, customerAddress });
-
   try {
+    const { date, time, customerName, customerEmail, customerAddress, selectedProducts, totalAmount } = req.body;
+
+    // Validate required fields
+    if (!date || !time || !customerName || !customerEmail || !customerAddress) {
+      return res.status(400).json({ message: 'All fields are required' });
+    }
+
+    // Validate products
+    if (!selectedProducts || !Array.isArray(selectedProducts) || selectedProducts.length === 0) {
+      return res.status(400).json({ message: 'At least one product must be selected' });
+    }
+
+    // Validate total amount
+    if (!totalAmount || totalAmount <= 0) {
+      return res.status(400).json({ message: 'Invalid total amount' });
+    }
+
+    // Check if slot is available
+    const existingSlot = await Slot.findOne({
+      date: new Date(date),
+      time: time,
+      isBooked: true
+    });
+
+    if (existingSlot) {
+      return res.status(400).json({ message: 'This slot is already booked' });
+    }
+
+    // Create new booking
     const slot = new Slot({
-      date,
-      time,
+      date: new Date(date),
+      time: time,
       isBooked: true,
       customerName,
       customerEmail,
-      customerAddress
+      customerAddress,
+      products: selectedProducts,
+      totalAmount
     });
-    console.log('Creating new slot:', slot);
 
     await slot.save();
-    console.log('Slot saved successfully:', slot);
     res.status(201).json(slot);
   } catch (error) {
-    console.error('Error in bookSlot:', error);
-    res.status(400).json({ message: error.message });
+    console.error('Booking error:', error);
+    res.status(500).json({ message: error.message });
   }
 };
 
 // Get booked slots for a user
 const getBookedSlots = async (req, res) => {
-  const { customerEmail } = req.query;
   try {
-    const slots = await Slot.find({ customerEmail, isBooked: true });
+    const { email } = req.params;
+    const slots = await Slot.find({
+      customerEmail: email,
+      isBooked: true
+    }).select('date time customerName customerAddress products totalAmount')
+      .sort({ date: 1, time: 1 });
     res.json(slots);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-// Cancel a booked slot
+// Cancel a slot
 const cancelSlot = async (req, res) => {
-  const { slotId } = req.params;
   try {
-    const slot = await Slot.findById(slotId);
+    const { id } = req.params;
+    const slot = await Slot.findById(id);
+    
     if (!slot) {
       return res.status(404).json({ message: 'Slot not found' });
     }
+
     slot.isBooked = false;
+    slot.customerName = undefined;
+    slot.customerEmail = undefined;
+    slot.customerAddress = undefined;
+    slot.products = undefined;
+    slot.totalAmount = undefined;
+    
     await slot.save();
-    res.json(slot);
+    res.json({ message: 'Slot cancelled successfully' });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
 module.exports = {
+  generateTimeSlots,
   getAvailableSlots,
   bookSlot,
   getBookedSlots,

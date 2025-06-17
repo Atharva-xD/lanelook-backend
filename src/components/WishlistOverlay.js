@@ -1,12 +1,24 @@
 import React from 'react';
-import "../index.css";
+import { useSelector, useDispatch } from 'react-redux';
+import { removeFromWishlist } from '../redux/slices/wishlistSlice';
+import { addToCart as addToCartAction } from '../redux/slices/cartSlice';
 import { Link } from "react-router-dom";
-import glasses1 from "../images/glasses1.jpg";
-import glasses2 from "../images/glasses2.jpg";
-import { FaTimes } from "react-icons/fa";
+import { FaTimes, FaHeart, FaShoppingCart } from "react-icons/fa";
 import { motion } from "framer-motion";
 
 function WishlistOverlay({ close }) {
+    const wishlist = useSelector((state) => state.wishlist);
+    const dispatch = useDispatch();
+
+    const handleRemoveFromWishlist = (id) => {
+        dispatch(removeFromWishlist(id));
+    };
+
+    const handleAddToCart = (item) => {
+        dispatch(addToCartAction(item));
+        dispatch(removeFromWishlist(item._id));
+    };
+
     return (
         <motion.div
             initial={{ x: 300, opacity: 0 }}
@@ -23,49 +35,54 @@ function WishlistOverlay({ close }) {
                     />
                 </div>
                 <div className="wishlist-item-container">
-                    <div className="row">
-                        <div className="wishlist-items">
-                            <div className="img col-3 col-md-4">
-                                <img
-                                    src={glasses1}
-                                    alt="glasses1"
-                                    className="img-fluid"
-                                />
-                            </div>
-                            <div className="item-details">
-                                <p className="p-title">Eyeglasses</p>
-                                <p className="p-price">1 x ₹850</p>
-                            </div>
+                    {wishlist.items.length === 0 ? (
+                        <div className="empty-wishlist">
+                            <FaHeart className="empty-icon" />
+                            <p>Your wishlist is empty</p>
                         </div>
-                    </div>
-                    <div className="row">
-                        <div className="wishlist-items">
-                            <div className="img col-3 col-md-4">
-                                <img
-                                    src={glasses2}
-                                    alt="glasses2"
-                                    className="img-fluid"
-                                />
+                    ) : (
+                        wishlist.items.map((item) => (
+                            <div key={item._id} className="wishlist-item">
+                                <div className="img col-3 col-md-4">
+                                    <img
+                                        src={item.image}
+                                        alt={item.name}
+                                        className="img-fluid"
+                                    />
+                                </div>
+                                <div className="item-details">
+                                    <p className="p-title">{item.name}</p>
+                                    <p className="p-price">₹{item.price}</p>
+                                    <div className="item-actions">
+                                        <button 
+                                            className="add-to-cart-btn"
+                                            onClick={() => handleAddToCart(item)}
+                                        >
+                                            <FaShoppingCart /> Add to Cart
+                                        </button>
+                                        <button 
+                                            className="remove-item"
+                                            onClick={() => handleRemoveFromWishlist(item._id)}
+                                        >
+                                            Remove
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
-                            <div className="item-details">
-                                <p className="p-title">Eyeglasses</p>
-                                <p className="p-price">1 x ₹850</p>
-                            </div>
-                        </div>
-                    </div>
+                        ))
+                    )}
                 </div>
                 <div className="wishlist-footer">
+                    <div className="wishlist-summary">
+                        <div className="summary-row">
+                            <span>Total Items:</span>
+                            <span>{wishlist.items.length}</span>
+                        </div>
+                    </div>
                     <div className="btns">
-                        <button className="btn btn-primary">Checkout</button>
-                        <button className="btn btn-secondary">
-                            <Link
-                                to="/wishlist"
-                                className="text-decoration-none text-white"
-                                onClick={close}
-                            >
-                                View Wishlist
-                            </Link>
-                        </button>
+                        <Link to="/shop" className="btn btn-primary" onClick={close}>
+                            Continue Shopping
+                        </Link>
                     </div>
                 </div>
             </div>

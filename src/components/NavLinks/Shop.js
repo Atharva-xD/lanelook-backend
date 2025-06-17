@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Star } from 'lucide-react';
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch } from 'react-redux';
+import { addToCart } from '../../redux/slices/cartSlice';
 import axios from 'axios';
 import './Shop.css';
 import Footer from '../Footer';
@@ -14,6 +16,9 @@ const Shop = () => {
   const [sortBy, setSortBy] = useState("default");
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [categories, setCategories] = useState([]);
+  const [addedToCart, setAddedToCart] = useState({});
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchProducts();
@@ -35,6 +40,27 @@ const Shop = () => {
     } catch (error) {
       console.error('Error fetching products:', error);
     }
+  };
+
+  const handleAddToCart = (product) => {
+    dispatch(addToCart({
+      _id: product._id,
+      name: product.name,
+      price: product.price,
+      image: product.image,
+      quantity: 1
+    }));
+    setAddedToCart(prev => ({ ...prev, [product._id]: true }));
+    
+    // Reset the button state after 2 seconds
+    setTimeout(() => {
+      setAddedToCart(prev => ({ ...prev, [product._id]: false }));
+    }, 2000);
+  };
+
+  const handleViewCart = (e) => {
+    e.stopPropagation();
+    navigate('/cart');
   };
 
   // Price ranges for filtering
@@ -179,11 +205,29 @@ const Shop = () => {
                     </div>
                     <div className="product-footer">
                       <span className="product-price">₹{product.price}</span>
-                      <Link to="/book" className="nav-link">
-                        <button className="add-to-cart-btn">
-                          Book Slot
-                        </button>
-                      </Link>
+                      <button 
+                        className={`custom-add-to-cart-btn${addedToCart[product._id] ? ' added' : ''}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (addedToCart[product._id]) {
+                            handleViewCart(e);
+                          } else {
+                            handleAddToCart(product);
+                          }
+                        }}
+                      >
+                        <AnimatePresence mode="wait">
+                          <motion.span
+                            key={addedToCart[product._id] ? 'view-cart' : 'add-to-cart'}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -10 }}
+                            transition={{ duration: 0.2 }}
+                          >
+                            {addedToCart[product._id] ? 'View Cart' : 'Add to Cart'}
+                          </motion.span>
+                        </AnimatePresence>
+                      </button>
                     </div>
                   </div>
                 </motion.div>
@@ -211,6 +255,7 @@ const Shop = () => {
               <ProductDetails
                 product={selectedProduct}
                 onClose={() => setSelectedProduct(null)}
+                onAddToCart={handleAddToCart}
               />
             )}
           </div>

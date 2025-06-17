@@ -1,48 +1,90 @@
 import React from 'react';
-import glasses1 from "../images/glasses1.jpg";
+import { useSelector, useDispatch } from 'react-redux';
+import { removeFromCart, updateQuantity } from '../redux/slices/cartSlice';
+import { useNavigate } from 'react-router-dom';
 import './ShoppingCart.css';
-import "../index.css";
 
 function ShoppingCart() {
+  const cart = useSelector((state) => state.cart);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleQuantityChange = (id, newQuantity) => {
+    if (newQuantity < 1) return;
+    dispatch(updateQuantity({ id, quantity: newQuantity }));
+  };
+
+  const handleRemoveItem = (id) => {
+    dispatch(removeFromCart(id));
+  };
+
+  const handleBookAppointment = () => {
+    navigate('/book');
+  };
+
   return (
     <div className="shopping-cart-container">
-      <h2 className="shopping-cart-title">Shopping Cart</h2>
       <div className="cart-items">
-        <div className="cart-item">
-          <img src={glasses1} alt="item 1" className="item-image" />
-          <div className="item-details">
-            <p className="item-name">Fresh Strawberries</p>
-            <p className="item-price">₹36.00</p>
-          </div>
-          <div className="item-quantity">
-            <button>-</button>
-            <input type="text" value="1" />
-            <button>+</button>
-          </div>
-          <p className="item-total">₹36.00</p>
-        </div>
-        {/* Add more cart items similarly */}
+        <h2 className="shopping-cart-title">Your Cart</h2>
+        {cart.items.length === 0 ? (
+          <p className="empty-cart">Your cart is empty</p>
+        ) : (
+          cart.items.map((item) => (
+            <div key={item._id} className="cart-item">
+              <div className="item-image">
+                <img src={item.image} alt={item.name} />
+              </div>
+              <div className="item-details">
+                <h3 className="item-name">{item.name}</h3>
+                <p className="item-duration">Duration: {item.duration} mins</p>
+                <p className="item-price">₹{item.price}</p>
+              </div>
+              <div className="item-quantity">
+                <button onClick={() => handleQuantityChange(item._id, item.quantity - 1)}>-</button>
+                <input 
+                  type="number" 
+                  value={item.quantity} 
+                  onChange={(e) => handleQuantityChange(item._id, parseInt(e.target.value))}
+                  min="1"
+                />
+                <button onClick={() => handleQuantityChange(item._id, item.quantity + 1)}>+</button>
+              </div>
+              <div className="item-total">
+                <p>₹{item.price * item.quantity}</p>
+                <button 
+                  className="remove-item"
+                  onClick={() => handleRemoveItem(item._id)}
+                >
+                  Remove
+                </button>
+              </div>
+            </div>
+          ))
+        )}
       </div>
       <div className="cart-summary">
-        <p className="subtotal">CART <span>TOTALS</span></p>
-        <div className="shipping-info">
-          <p>Shipping:</p>
-          <p>There are no shipping methods available. Please double check your address.</p>
+        <h3>Appointment Summary</h3>
+        <div className="summary-details">
+          <div className="summary-row">
+            <span>Total Services:</span>
+            <span>{cart.items.length}</span>
+          </div>
+          <div className="summary-row">
+            <span>Total Duration:</span>
+            <span>{cart.items.reduce((total, item) => total + (item.duration * item.quantity), 0)} mins</span>
+          </div>
+          <div className="summary-row total">
+            <span>Total Amount:</span>
+            <span>₹{cart.total}</span>
+          </div>
         </div>
-        <div className="calculate-shipping">
-          <p>Calculate Shipping</p>
-          <select>
-            <option>Select a country...</option>
-            {/* Add options */}
-          </select>
-          <input type="text" placeholder="State / country" />
-          <input type="text" placeholder="Postcode / Zip" />
-          <button>Update Totals</button>
-        </div>
-        <div className="total">
-          <p>Total: <span>₹79.65</span></p>
-        </div>
-        <button className="proceed-checkout">Proceed to Checkout</button>
+        <button 
+          className="proceed-checkout"
+          onClick={handleBookAppointment}
+          disabled={cart.items.length === 0}
+        >
+          Book Appointment
+        </button>
       </div>
     </div>
   );

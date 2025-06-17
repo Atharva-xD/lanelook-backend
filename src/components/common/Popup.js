@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaCheckCircle, FaTimesCircle, FaExclamationCircle } from 'react-icons/fa';
 import './Popup.css';
 
 const Popup = ({ 
@@ -26,19 +25,6 @@ const Popup = ({
     }
   }, [isOpen, autoClose, autoCloseTime, onClose]);
 
-  const getIcon = () => {
-    switch (type) {
-      case 'success':
-        return <FaCheckCircle className="popup-icon success" />;
-      case 'error':
-        return <FaTimesCircle className="popup-icon error" />;
-      case 'warning':
-        return <FaExclamationCircle className="popup-icon warning" />;
-      default:
-        return null;
-    }
-  };
-
   if (!isOpen) return null;
 
   return (
@@ -51,14 +37,13 @@ const Popup = ({
         onClick={onClose}
       >
         <motion.div
-          className="popup-content"
+          className={`popup-content ${type}`}
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.8, opacity: 0 }}
           onClick={e => e.stopPropagation()}
         >
           <div className="popup-header">
-            {getIcon()}
             <h3 className={`popup-title ${type}`}>{title}</h3>
           </div>
           

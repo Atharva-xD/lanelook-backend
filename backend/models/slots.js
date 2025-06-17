@@ -1,5 +1,28 @@
 const mongoose = require('mongoose');
 
+const ProductInfoSchema = new mongoose.Schema({
+  id: {
+    type: String,
+    required: true
+  },
+  name: {
+    type: String,
+    required: true
+  },
+  image: {
+    type: String,
+    required: true
+  },
+  price: {
+    type: Number,
+    required: true
+  },
+  productId: {
+    type: String,
+    required: true
+  }
+}, { _id: false });
+
 const SlotSchema = new mongoose.Schema({
   date: {
     type: Date,
@@ -25,6 +48,14 @@ const SlotSchema = new mongoose.Schema({
   customerAddress: {
     type: String,
     required: true
+  },
+  products: [{
+    type: ProductInfoSchema,
+    required: false
+  }],
+  totalAmount: {
+    type: Number,
+    required: false
   }
 }, {
   timestamps: true

@@ -1,67 +1,77 @@
 import "./App.css";
-import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
-import Navbar from "./components/Navbar";
-import Home from "./components/NavLinks/Home.js";
-import ShoppingCart from "./components/ShoppingCart.js";
-import Contact from "./components/NavLinks/Contact.js";
-import About from "./components/NavLinks/About.js";
-import Book from "./components/NavLinks/Book.js";
-import SignIn from "./components/SignIn.js";
-import Shop from "./components/NavLinks/Shop.js";
-import Admin from "./components/admin/Admin.js";
-import AdminDashboard from "./components/admin/DashboardPage.js";
-import StatsCard from "./components/admin/SidebarComponents/StatsCard.js"; 
-import OrdersTable from "./components/admin/SidebarComponents/OrdersTable.js";
-import UsersTable from "./components/admin/SidebarComponents/UsersTable.js";
-import ProductsChart from "./components/admin/SidebarComponents/ProductsChart.js";
+import React from 'react';
+import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
+import { Provider } from 'react-redux';
+import { store } from './redux/store';
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { PopupProvider } from "./context/PopupContext";
+import Navbar from './components/Navbar';
+import Home from './components/NavLinks/Home';
+import Shop from './components/NavLinks/Shop';
+import About from './components/NavLinks/About';
+import Contact from './components/NavLinks/Contact';
+import Book from './components/NavLinks/Book';
+import SignIn from './components/SignIn';
+import ShoppingCart from './components/ShoppingCart';
+import Admin from './components/admin/Admin';
+import Services from './components/Services';
 
 // Protected Route component
 const ProtectedRoute = ({ children, requireAdmin = false }) => {
-  const { isAuthenticated, isAdmin, loading } = useAuth();
-
-  if (loading) {
-    return <div>Loading...</div>;
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  
+  if (!user) {
+    return <SignIn close={() => navigate('/')} />;
   }
 
-  if (!isAuthenticated()) {
-    return <Navigate to="/signin" />;
-  }
-
-  if (requireAdmin && !isAdmin()) {
-    return <Navigate to="/" />;
+  if (requireAdmin && user.role !== 'admin') {
+    return <div>Access Denied</div>;
   }
 
   return children;
 };
 
+// Wrapper component to use useNavigate
+const AppRoutes = () => {
+  const navigate = useNavigate();
+  
+  return (
+    <>
+      <Navbar />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/shop" element={<Shop />} />
+        <Route path="/services" element={<Services />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/book" element={<Book />} />
+        <Route path="/signin" element={<SignIn close={() => navigate('/')} />} />
+        <Route path="/cart" element={<ShoppingCart />} />
+        <Route
+          path="/admin/*"
+          element={
+            <ProtectedRoute requireAdmin={true}>
+              <Admin />
+            </ProtectedRoute>
+          }
+        />
+      </Routes>
+    </>
+  );
+};
+
 function App() {
   return (
-    <AuthProvider>
-      <PopupProvider>
-        <BrowserRouter>
-          <Navbar />
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/shop" element={<Shop />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/book" element={<Book />} />
-            <Route path="/signin" element={<SignIn />} />
-            <Route path="/cart" element={<ShoppingCart />} />
-            <Route
-              path="/admin/*"
-              element={
-                <ProtectedRoute requireAdmin={true}>
-                  <Admin />
-                </ProtectedRoute>
-              }
-            />
-          </Routes>
-        </BrowserRouter>
-      </PopupProvider>
-    </AuthProvider>
+    <Provider store={store}>
+      <AuthProvider>
+        <PopupProvider>
+          <BrowserRouter>
+            <AppRoutes />
+          </BrowserRouter>
+        </PopupProvider>
+      </AuthProvider>
+    </Provider>
   );
 }
 

@@ -6,6 +6,7 @@ import SearchOverlay from "./SearchOverlay.js";
 import { FaSearch, FaShoppingCart, FaHeart } from "react-icons/fa";
 import { motion } from "framer-motion";
 import Signin from "./SignIn.js";
+import Register from "./Register.js";
 import { useAuth } from '../context/AuthContext';
 
 // Constants
@@ -38,10 +39,12 @@ const Navbar = () => {
     search: false,
     cart: false,
     wishlist: false,
-    signIn: false
+    signIn: false,
+    register: false
   });
   const [cartVisible, setCartVisible] = useState(false);
   const [showSignIn, setShowSignIn] = useState(false);
+  const [showRegister, setShowRegister] = useState(false);
   const { user, logout } = useAuth();
   const [activeTab, setActiveTab] = useState("home");
 
@@ -56,6 +59,11 @@ const Navbar = () => {
     const newTab = ROUTE_TAB_MAP[location.pathname] || "home";
     setActiveTab(newTab);
   }, [location.pathname]);
+
+  // Add debug logging
+  useEffect(() => {
+    console.log('Current user data:', user);
+  }, [user]);
 
   // Helper function to toggle body classes
   const toggleBodyClass = useCallback((className, shouldAdd) => {
@@ -98,6 +106,10 @@ const Navbar = () => {
     setShowSignIn(true);
   }, []);
 
+  const handleRegisterClick = useCallback(() => {
+    setShowRegister(true);
+  }, []);
+
   const handleCancelClick = useCallback(() => {
     closeOverlay('search');
   }, [closeOverlay]);
@@ -114,9 +126,14 @@ const Navbar = () => {
     setShowSignIn(false);
   }, []);
 
+  const handleCloseRegister = useCallback(() => {
+    setShowRegister(false);
+  }, []);
+
   const handleLogout = useCallback(() => {
     logout();
-  }, [logout]);
+    navigate('/');
+  }, [logout, navigate]);
 
   const handleTabClick = useCallback((tab) => {
     setActiveTab(tab);
@@ -165,13 +182,18 @@ const Navbar = () => {
             <a href="#">Help & FAQs</a>
             {user ? (
               <div className="d-inline-block">
-                <span className="me-3">{user.email}</span>
+                <span className="me-3">{user.username || 'Loading...'}</span>
                 <a href="#" onClick={handleLogout}>Logout</a>
               </div>
             ) : (
-              <a className="signIn-topbar" onClick={handleSignInClick}>
-                Sign In
-              </a>
+              <>
+                <a className="signIn-topbar me-3" onClick={handleSignInClick}>
+                  Sign In
+                </a>
+                <a className="signIn-topbar" onClick={handleRegisterClick}>
+                  Register
+                </a>
+              </>
             )}
             <a href="#">EN</a>
             <a href="#">India</a>
@@ -266,6 +288,10 @@ const Navbar = () => {
             handleCloseSignIn();
           }}
         />
+      )}
+
+      {showRegister && (
+        <Register close={handleCloseRegister} />
       )}
 
       {overlays.search && (  

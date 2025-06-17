@@ -1,13 +1,19 @@
 // Book.js
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useRef } from "react";
 import { usePopup } from "../../context/PopupContext";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { clearCart } from "../../redux/slices/cartSlice";
 import emailjs from '@emailjs/browser';
+import { useAuth } from "../../context/AuthContext";
 import "./Book.css";
 
 const Book = () => {
+  const location = useLocation();
+  const dispatch = useDispatch();
+  const cartItems = useSelector((state) => state.cart.items);
   const [date, setDate] = useState('');
   const [time, setTime] = useState('');
-  const [loading, setLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     from_name: '',
@@ -17,7 +23,13 @@ const Book = () => {
   });
   const [errors, setErrors] = useState({});
   const form = useRef();
-  const { showSuccess, showError, showConfirm, showPopup } = usePopup();
+  const { showPopup } = usePopup();
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+
+  // Get product information from location state or cart
+  const productInfo = location.state?.productInfo;
+  const selectedProducts = productInfo ? [productInfo] : cartItems;
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -41,11 +53,32 @@ const Book = () => {
       errors.from_email = 'Invalid email address';
     }
     if (!formData.address) errors.address = 'Address is required';
-    if (!formData.timeSlot) errors.timeSlot = 'Time slot is required';
+    if (!time) errors.time = 'Time slot is required';
+    if (!date) errors.date = 'Date is required';
+    
+    // Debug logs
+    console.log('Selected Products:', selectedProducts);
+    console.log('Cart Items:', cartItems);
+    console.log('Product Info:', productInfo);
+    
+    if (!selectedProducts || selectedProducts.length === 0) {
+      console.log('No products selected');
+      errors.products = 'Please select at least one product';
+    }
     return errors;
   };
 
   const handleBooking = async () => {
+    if (!isAuthenticated()) {
+      showPopup({
+        type: 'error',
+        title: 'Authentication Required',
+        message: 'Please sign in to book an appointment.'
+      });
+      navigate('/signin');
+      return;
+    }
+
     if (!date || !time) {
       showPopup({
         type: 'error',
@@ -55,26 +88,50 @@ const Book = () => {
       return;
     }
 
+    const formErrors = validateForm();
+    if (Object.keys(formErrors).length > 0) {
+      setErrors(formErrors);
+      showPopup({
+        type: 'error',
+        title: 'Validation Error',
+        message: 'Please fill in all required fields and select at least one product.'
+      });
+      return;
+    }
+
     try {
+      // Transform products to match the backend schema
+      const formattedProducts = selectedProducts.map(product => ({
+        id: product._id,
+        name: product.name,
+        image: product.image,
+        price: product.price,
+        productId: product._id
+      }));
+
       console.log('Sending booking request with data:', {
         date,
         time,
         customerName: formData.from_name,
         customerEmail: formData.from_email,
-        customerAddress: formData.address
+        customerAddress: formData.address,
+        products: formattedProducts
       });
 
       const response = await fetch('http://localhost:5000/api/slots/book', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
         body: JSON.stringify({
           date,
           time,
           customerName: formData.from_name,
           customerEmail: formData.from_email,
-          customerAddress: formData.address
+          customerAddress: formData.address,
+          selectedProducts: formattedProducts,
+          totalAmount: formattedProducts.reduce((sum, p) => sum + p.price, 0)
         })
       });
 
@@ -96,7 +153,9 @@ const Book = () => {
             from_email: formData.from_email,
             to_email: formData.from_email,
             message: `Your appointment has been booked for ${date} at ${time}.`,
-            address: formData.address
+            address: formData.address,
+            products: selectedProducts.map(p => p.name).join(', '),
+            totalAmount: selectedProducts.reduce((sum, p) => sum + p.price, 0)
           };
 
           // Send email using EmailJS
@@ -114,6 +173,9 @@ const Book = () => {
             message: `Your appointment has been booked for ${date} at ${time}. A confirmation email has been sent to ${formData.from_email}.`,
             autoClose: true
           });
+          
+          // Clear the cart after successful booking
+          dispatch(clearCart());
           
           // Reset form
           setDate('');
@@ -140,6 +202,13 @@ const Book = () => {
             title: 'Slot Unavailable',
             message: 'This time slot is already booked. Please select a different time.'
           });
+        } else if (data.message === 'Please authenticate.') {
+          showPopup({
+            type: 'error',
+            title: 'Authentication Required',
+            message: 'Please sign in to book an appointment.'
+          });
+          navigate('/signin');
         } else {
           showPopup({
             type: 'error',
@@ -174,6 +243,26 @@ const Book = () => {
       <div className="book-content">
         <h1>Book an Appointment</h1>
         <p>Select your preferred date and time for your appointment.</p>
+
+        {selectedProducts.length > 0 && (
+          <div className="selected-products-info">
+            <h3>Selected Products</h3>
+            <div className="products-grid">
+              {selectedProducts.map((product) => (
+                <div key={product._id} className="product-preview">
+                  <img src={product.image} alt={product.name} />
+                  <div className="product-details">
+                    <h4>{product.name}</h4>
+                    <p>Price: ₹{product.price}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="total-amount">
+              <h4>Total Amount: ₹{selectedProducts.reduce((sum, p) => sum + p.price, 0)}</h4>
+            </div>
+          </div>
+        )}
 
         <form ref={form} className="booking-form">
           <div className="form-group">
@@ -249,9 +338,9 @@ const Book = () => {
             type="button"
             className="book-button"
             onClick={handleBooking}
-            disabled={isSubmitting || !date || !time}
+            disabled={isSubmitting}
           >
-            {isSubmitting ? "Booking..." : "Book Appointment"}
+            {isSubmitting ? 'Booking...' : 'Book Appointment'}
           </button>
         </form>
 

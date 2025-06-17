@@ -57,7 +57,7 @@ const Signin = ({ close, onLogin }) => {
         password
       });
 
-      console.log('Login response:', response.data);
+      console.log('Login response data:', JSON.stringify(response.data, null, 2));
 
       // Call the login function from AuthContext
       login(response.data);
