@@ -6,6 +6,16 @@ const ProductsChart = ({ dateRange }) => {
   const [chartData, setChartData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     fetchChartData();
@@ -72,6 +82,22 @@ const ProductsChart = ({ dateRange }) => {
     }
   };
 
+  const getChartHeight = () => {
+    if (windowWidth <= 360) return 120;
+    if (windowWidth <= 480) return 150;
+    if (windowWidth <= 768) return 180;
+    if (windowWidth <= 992) return 200;
+    if (windowWidth <= 1200) return 250;
+    return 300;
+  };
+
+  const getTickCount = () => {
+    if (windowWidth <= 480) return 3;
+    if (windowWidth <= 768) return 4;
+    if (windowWidth <= 992) return 5;
+    return 6;
+  };
+
   if (loading) {
     return <div className="chart-loading">Loading chart data...</div>;
   }
@@ -82,44 +108,65 @@ const ProductsChart = ({ dateRange }) => {
 
   return (
     <div className="chart-container">
-      <ResponsiveContainer width="100%" height={300}>
+      <ResponsiveContainer width="100%" height={getChartHeight()}>
         <LineChart data={chartData}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis 
             dataKey="date" 
-            tick={{ fontSize: 12 }}
+            tick={{ fontSize: windowWidth <= 480 ? 10 : 12 }}
             tickFormatter={(value) => {
               const date = new Date(value);
+              if (windowWidth <= 480) {
+                return dateRange === 'year' ? 
+                  date.toLocaleDateString('default', { month: 'short' }) :
+                  date.toLocaleDateString('default', { day: 'numeric' });
+              }
               return dateRange === 'year' ? 
                 date.toLocaleDateString('default', { month: 'short' }) :
                 date.toLocaleDateString('default', { day: 'numeric', month: 'short' });
             }}
+            interval={Math.floor(chartData.length / getTickCount())}
           />
           <YAxis 
             yAxisId="left"
-            tick={{ fontSize: 12 }}
-            tickFormatter={(value) => `$${value}`}
+            tick={{ fontSize: windowWidth <= 480 ? 10 : 12 }}
+            tickFormatter={(value) => {
+              if (windowWidth <= 480) {
+                return value >= 1000 ? `${value/1000}k` : value;
+              }
+              return `₹${value}`;
+            }}
           />
           <YAxis 
             yAxisId="right"
             orientation="right"
-            tick={{ fontSize: 12 }}
+            tick={{ fontSize: windowWidth <= 480 ? 10 : 12 }}
           />
           <Tooltip 
             formatter={(value, name) => [
-              name === 'sales' ? `$${value.toFixed(2)}` : value,
+              name === 'sales' ? `₹${value.toFixed(2)}` : value,
               name === 'sales' ? 'Sales' : 'Orders'
             ]}
             labelFormatter={(label) => new Date(label).toLocaleDateString()}
+            contentStyle={{
+              fontSize: windowWidth <= 480 ? '12px' : '14px',
+              padding: windowWidth <= 480 ? '8px' : '12px'
+            }}
           />
-          <Legend />
+          <Legend 
+            wrapperStyle={{
+              paddingTop: windowWidth <= 480 ? '10px' : '20px',
+              fontSize: windowWidth <= 480 ? '12px' : '14px'
+            }}
+          />
           <Line 
             yAxisId="left"
             type="monotone" 
             dataKey="sales" 
             stroke="#00b894" 
             name="Sales"
-            strokeWidth={2}
+            strokeWidth={windowWidth <= 480 ? 1.5 : 2}
+            dot={windowWidth <= 480 ? false : true}
           />
           <Line 
             yAxisId="right"
@@ -127,7 +174,8 @@ const ProductsChart = ({ dateRange }) => {
             dataKey="orders" 
             stroke="#0984e3" 
             name="Orders"
-            strokeWidth={2}
+            strokeWidth={windowWidth <= 480 ? 1.5 : 2}
+            dot={windowWidth <= 480 ? false : true}
           />
         </LineChart>
       </ResponsiveContainer>

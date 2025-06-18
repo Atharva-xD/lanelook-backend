@@ -1,5 +1,9 @@
 .products-table {
     margin-top: 20px;
+    width: 100%;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
   }
   
   .tabs {
@@ -28,6 +32,7 @@
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
   }
   
   .product-details-tab h3,
@@ -37,8 +42,15 @@
   }
   
   /* Table Styles */
+  .products-overview-tab {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
   .products-overview-tab table {
     width: 100%;
+    min-width: 800px;
     border-collapse: collapse;
   }
   
@@ -46,6 +58,7 @@
     padding: 10px;
     border: 1px solid #ddd;
     text-align: center;
+    white-space: nowrap;
   }
   
   .products-overview-tab th {
@@ -180,4 +193,74 @@
     border-radius: 4px;
     margin-bottom: 1rem;
     text-align: center;
+  }
+
+  /* Responsive Styles */
+  @media (max-width: 1400px) {
+    .products-table {
+      max-width: 1200px;
+    }
+  }
+
+  @media (max-width: 1200px) {
+    .products-table {
+      max-width: 100%;
+      padding: 0 1rem;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .products-table {
+      margin-top: 10px;
+      padding: 0;
+    }
+
+    .tabs {
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .tabs button {
+      padding: 8px 15px;
+      font-size: 14px;
+    }
+
+    .tab-content {
+      padding: 15px;
+    }
+
+    .products-overview-tab table {
+      min-width: 600px;
+    }
+
+    .products-overview-tab th, 
+    .products-overview-tab td {
+      padding: 8px;
+      font-size: 14px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .tabs {
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .tabs button {
+      width: 100%;
+    }
+
+    .tab-content {
+      padding: 10px;
+    }
+
+    .products-overview-tab table {
+      min-width: 400px;
+    }
+
+    .products-overview-tab th, 
+    .products-overview-tab td {
+      padding: 6px;
+      font-size: 12px;
+    }
   }

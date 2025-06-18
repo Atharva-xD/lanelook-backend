@@ -1,4 +1,6 @@
 const Slot = require('../models/slots');
+const Order = require('../models/Order');
+const User = require('../models/User');
 
 // Generate time slots for a given date
 const generateTimeSlots = async (date) => {
@@ -81,6 +83,13 @@ const bookSlot = async (req, res) => {
       return res.status(400).json({ message: 'This slot is already booked' });
     }
 
+    // Find user by email
+    const user = await User.findOne({ email: customerEmail });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found. Please sign up first.' });
+    }
+
+    console.log('Creating slot booking...');
     // Create new booking
     const slot = new Slot({
       date: new Date(date),
@@ -94,7 +103,42 @@ const bookSlot = async (req, res) => {
     });
 
     await slot.save();
-    res.status(201).json(slot);
+    console.log('Slot booked successfully:', slot._id);
+
+    console.log('Creating order...');
+    // Create order from the booking
+    const order = new Order({
+      user: user._id,
+      orderItems: selectedProducts.map(product => ({
+        product: product.id,
+        quantity: 1,
+        price: product.price
+      })),
+      shippingAddress: {
+        address: customerAddress,
+        city: 'Mumbai', // Default city
+        postalCode: '400001', // Default postal code
+        country: 'India'
+      },
+      taxPrice: 0,
+      shippingPrice: 0,
+      totalPrice: totalAmount,
+      orderStatus: 'pending'
+    });
+
+    try {
+      const savedOrder = await order.save();
+      console.log('Order created successfully:', savedOrder._id);
+      res.status(201).json({ slot, order: savedOrder });
+    } catch (orderError) {
+      console.error('Error creating order:', orderError);
+      // Even if order creation fails, we still return the slot booking
+      res.status(201).json({ 
+        slot, 
+        orderError: orderError.message,
+        message: 'Slot booked successfully but order creation failed'
+      });
+    }
   } catch (error) {
     console.error('Booking error:', error);
     res.status(500).json({ message: error.message });

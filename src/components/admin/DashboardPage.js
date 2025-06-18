@@ -27,9 +27,21 @@ const AdminDashboard = () => {
       setLoading(true);
       // Fetch all required data in parallel
       const [usersRes, ordersRes, productsRes] = await Promise.all([
-        axios.get('/api/users'),
-        axios.get('/api/orders'),
-        axios.get('/api/products')
+        axios.get('http://localhost:5000/api/users', {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }),
+        axios.get('http://localhost:5000/api/orders', {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }),
+        axios.get('http://localhost:5000/api/products', {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        })
       ]);
 
       const users = usersRes.data;
@@ -171,69 +183,66 @@ const AdminDashboard = () => {
     <div className="admin-dashboard">
       <SidebarAdmin />
       <div className="main-content">
-        <div className="dashboard-header">
-          <h1>Dashboard Overview</h1>
-          <div className="date-filter">
-            <select 
-              className="date-select"
-              value={dateRange}
-              onChange={(e) => setDateRange(e.target.value)}
-            >
-              <option value="today">Today</option>
-              <option value="week">This Week</option>
-              <option value="month">This Month</option>
-              <option value="year">This Year</option>
-            </select>
+        <div className="dashboard-container">
+          <div className="dashboard-header">
+            <h1>Dashboard Overview</h1>
+            <div className="date-filter">
+              <select 
+                className="date-select"
+                value={dateRange}
+                onChange={(e) => setDateRange(e.target.value)}
+              >
+                <option value="today">Today</option>
+                <option value="week">This Week</option>
+                <option value="month">This Month</option>
+                <option value="year">This Year</option>
+              </select>
+            </div>
           </div>
-        </div>
-
-        <div className="dashboard-overview">
-          <StatsCard 
-            title="Total Users" 
-            value={stats.totalUsers} 
-            icon="user" 
-            trend={`${stats.trends.users.toFixed(1)}%`}
-            trendUp={stats.trends.users >= 0}
-          />
-          <StatsCard 
-            title="Total Sales" 
-            value={`$${stats.totalSales}`} 
-            icon="dollar" 
-            trend={`${stats.trends.sales.toFixed(1)}%`}
-            trendUp={stats.trends.sales >= 0}
-          />
-          <StatsCard 
-            title="Active Orders" 
-            value={stats.activeOrders} 
-            icon="cart" 
-            trend={`${stats.trends.orders.toFixed(1)}%`}
-            trendUp={stats.trends.orders >= 0}
-          />
-          <StatsCard 
-            title="Products" 
-            value={stats.totalProducts} 
-            icon="box" 
-            trend={`${stats.trends.products.toFixed(1)}%`}
-            trendUp={stats.trends.products >= 0}
-          />
-        </div>
-
-        <div className="dashboard-grid">
-          <div className="chart-section">
+          <div className="dashboard-overview">
+            <StatsCard
+              title="Total Users"
+              value={stats.totalUsers}
+              icon="user"
+              trend={`${stats.trends.users.toFixed(1)}%`}
+              trendUp={stats.trends.users >= 0}
+            />
+            <StatsCard
+              title="Total Sales"
+              value={`₹${stats.totalSales}`}
+              icon="rupees"
+              trend={`${stats.trends.sales.toFixed(1)}%`}
+              trendUp={stats.trends.sales >= 0}
+            />
+            <StatsCard
+              title="Active Orders"
+              value={stats.activeOrders}
+              icon="cart"
+              trend={`${stats.trends.orders.toFixed(1)}%`}
+              trendUp={stats.trends.orders >= 0}
+            />
+            <StatsCard
+              title="Total Products"
+              value={stats.totalProducts}
+              icon="box"
+              trend={`${stats.trends.products.toFixed(1)}%`}
+              trendUp={stats.trends.products >= 0}
+            />
+          </div>
+          <div className="dashboard-grid">
             <div className="chart-card">
               <h2>Sales Overview</h2>
               <ProductsChart dateRange={dateRange} />
             </div>
-          </div>
-
-          <div className="tables-section">
-            <div className="table-card">
-              <h2>Recent Orders</h2>
-              <OrdersTable />
-            </div>
-            <div className="table-card">
-              <h2>Recent Users</h2>
-              <UsersTable />
+            <div className="tables-section">
+              <div className="table-card">
+                <h2>Recent Orders</h2>
+                <OrdersTable limit={5} />
+              </div>
+              <div className="table-card">
+                <h2>Recent Users</h2>
+                <UsersTable limit={5} />
+              </div>
             </div>
           </div>
         </div>

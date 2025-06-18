@@ -31,24 +31,47 @@
   background-color: #f4f6f8;
 }
 
-.users-table {
+.users-table-container {
+  max-width: 1200px;
+  margin: 0 auto !important;
   width: 100%;
   overflow-x: auto;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.users-table-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid #dfe6e9;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.users-table-header h2 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #2d3436;
+}
+
+.users-table {
+  width: 100%;
+  min-width: 800px; /* Minimum width to prevent squishing */
 }
 
 .users-table table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 1rem;
 }
 
 .users-table th {
-  background-color: #f8f9fa;
-  color: #2d3436;
-  font-weight: 600;
   text-align: left;
   padding: 1rem;
-  border-bottom: 2px solid #dfe6e9;
+  background-color: #f8f9fa;
+  color: #636e72;
+  font-weight: 500;
+  white-space: nowrap;
 }
 
 .users-table td {
@@ -61,10 +84,6 @@
   border-bottom: none;
 }
 
-.users-table tr:hover {
-  background-color: #f8f9fa;
-}
-
 .user-info {
   display: flex;
   align-items: center;
@@ -75,65 +94,146 @@
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background-color: #0984e3;
+  background-color: #74b9ff;
   color: white;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 600;
-  font-size: 0.9rem;
-}
-
-.role-badge {
-  padding: 0.25rem 0.75rem;
-  border-radius: 20px;
-  font-size: 0.85rem;
   font-weight: 500;
-  text-transform: capitalize;
 }
 
-.role-badge.admin {
-  background-color: #e74c3c;
-  color: white;
+.role-select {
+  padding: 0.4rem 0.75rem;
+  border: 1px solid #dfe6e9;
+  border-radius: 6px;
+  background-color: white;
+  color: #2d3436;
+  font-size: 0.9rem;
+  cursor: pointer;
+  outline: none;
 }
 
-.role-badge.user {
-  background-color: #3498db;
+.role-select.admin {
+  background-color: #74b9ff;
   color: white;
+  border-color: #74b9ff;
+}
+
+.view-details-btn {
+  padding: 0.4rem 0.75rem;
+  background-color: #74b9ff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.2s;
+}
+
+.view-details-btn:hover {
+  background-color: #0984e3;
 }
 
 .loading {
   text-align: center;
-  padding: 2rem;
-  color: #636e72;
+  padding: 20px;
+  color: #666;
+}
+
+.error-container {
+  text-align: center;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin: 20px;
 }
 
 .error {
-  text-align: center;
-  padding: 2rem;
-  color: #e74c3c;
+  color: #dc3545;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  border-radius: 4px;
+  padding: 15px;
+  margin-bottom: 15px;
 }
 
-/* Responsive styles */
-@media (max-width: 768px) {
-  .users-table {
+.login-btn {
+  padding: 8px 16px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.2s;
+}
+
+.login-btn:hover {
+  background-color: #0056b3;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .users-table-container {
     margin: 0 -1rem;
+    border-radius: 0;
   }
-  
+}
+
+@media (max-width: 768px) {
+  .users-table-header {
+    padding: 1rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .users-table-header h2 {
+    font-size: 1.1rem;
+  }
+
   .users-table th,
   .users-table td {
     padding: 0.75rem;
     font-size: 0.9rem;
   }
-  
+
   .user-avatar {
     width: 28px;
     height: 28px;
+    font-size: 0.9rem;
+  }
+
+  .role-select,
+  .view-details-btn {
+    padding: 0.3rem 0.6rem;
     font-size: 0.8rem;
   }
-  
-  .role-badge {
-    padding: 0.2rem 0.5rem;
+}
+
+@media (max-width: 480px) {
+  .users-table-container {
+    margin: 0 -0.5rem;
+  }
+
+  .users-table-header {
+    padding: 0.75rem;
+  }
+
+  .users-table th,
+  .users-table td {
+    padding: 0.5rem;
+    font-size: 0.8rem;
+  }
+
+  .user-info {
+    gap: 0.5rem;
+  }
+
+  .user-avatar {
+    width: 24px;
+    height: 24px;
     font-size: 0.8rem;
   }
 }

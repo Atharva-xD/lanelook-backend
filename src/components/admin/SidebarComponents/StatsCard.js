@@ -1,14 +1,15 @@
 import React from 'react';
 import { FaUser, FaDollarSign, FaShoppingCart, FaBox } from 'react-icons/fa';
 import { FaArrowUp, FaArrowDown } from 'react-icons/fa';
+import { FaIndianRupeeSign } from 'react-icons/fa6';
 
 const StatsCard = ({ title, value, icon, trend, trendUp }) => {
   const getIcon = () => {
     switch (icon) {
       case 'user':
         return <FaUser className="stats-icon" />;
-      case 'dollar':
-        return <FaDollarSign className="stats-icon" />;
+      case 'rupees':
+        return <FaIndianRupeeSign className="stats-icon" />;
       case 'cart':
         return <FaShoppingCart className="stats-icon" />;
       case 'box':

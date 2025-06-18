@@ -155,7 +155,8 @@ const Book = () => {
             message: `Your appointment has been booked for ${date} at ${time}.`,
             address: formData.address,
             products: selectedProducts.map(p => p.name).join(', '),
-            totalAmount: selectedProducts.reduce((sum, p) => sum + p.price, 0)
+            totalAmount: selectedProducts.reduce((sum, p) => sum + p.price, 0),
+            orderId: data.order._id // Add order ID to email
           };
 
           // Send email using EmailJS
@@ -170,7 +171,7 @@ const Book = () => {
           showPopup({
             type: 'success',
             title: 'Booking Confirmed',
-            message: `Your appointment has been booked for ${date} at ${time}. A confirmation email has been sent to ${formData.from_email}.`,
+            message: `Your appointment has been booked for ${date} at ${time}. A confirmation email has been sent to ${formData.from_email}. Order ID: ${data.order._id}`,
             autoClose: true
           });
           
@@ -187,42 +188,22 @@ const Book = () => {
             timeSlot: ''
           });
         } catch (emailError) {
-          console.error('Error sending email:', emailError);
+          console.error('Email sending error:', emailError);
           showPopup({
-            type: 'warning',
-            title: 'Partial Success',
-            message: 'Your slot was booked, but we could not send the confirmation email. Please note your appointment time.'
+            type: 'error',
+            title: 'Email Error',
+            message: 'Booking was successful but there was an error sending the confirmation email.'
           });
         }
       } else {
-        // Handle specific error cases
-        if (data.message && data.message.includes('already exists')) {
-          showPopup({
-            type: 'error',
-            title: 'Slot Unavailable',
-            message: 'This time slot is already booked. Please select a different time.'
-          });
-        } else if (data.message === 'Please authenticate.') {
-          showPopup({
-            type: 'error',
-            title: 'Authentication Required',
-            message: 'Please sign in to book an appointment.'
-          });
-          navigate('/signin');
-        } else {
-          showPopup({
-            type: 'error',
-            title: 'Booking Failed',
-            message: data.message || 'Failed to book slot. Please try again.'
-          });
-        }
+        throw new Error(data.message || 'Failed to book appointment');
       }
     } catch (error) {
-      console.error('Error in handleBooking:', error);
+      console.error('Booking error:', error);
       showPopup({
         type: 'error',
-        title: 'Error',
-        message: 'Failed to book slot. Please try again.'
+        title: 'Booking Error',
+        message: error.message || 'Failed to book appointment. Please try again.'
       });
     }
   };

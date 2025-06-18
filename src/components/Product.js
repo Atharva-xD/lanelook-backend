@@ -12,7 +12,7 @@ function Product(props) {
           <p className="card-text">{props.product.description}</p>
         </div>
         <div className="d-flex justify-content-around">
-            <h3>${props.product.price}</h3>
+            <h3>₹{props.product.price}</h3>
             <button className="btn btn-primary mb-3">
             {props.product.quantity}
           </button>
