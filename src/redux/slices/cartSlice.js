@@ -1,41 +1,95 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import axios from 'axios';
+
+// Thunks for backend cart API
+export const fetchCart = createAsyncThunk('cart/fetchCart', async (_, { rejectWithValue }) => {
+  try {
+    const res = await axios.get('/api/cart', { withCredentials: true });
+    return res.data;
+  } catch (err) {
+    return rejectWithValue(err.response?.data?.message || 'Failed to fetch cart');
+  }
+});
+
+export const addToCart = createAsyncThunk('cart/addToCart', async ({ productId, quantity = 1 }, { rejectWithValue }) => {
+  try {
+    const res = await axios.post('/api/cart', { productId, quantity }, { withCredentials: true });
+    return res.data;
+  } catch (err) {
+    return rejectWithValue(err.response?.data?.message || 'Failed to add to cart');
+  }
+});
+
+export const updateCartItem = createAsyncThunk('cart/updateCartItem', async ({ productId, quantity }, { rejectWithValue }) => {
+  try {
+    const res = await axios.put('/api/cart', { productId, quantity }, { withCredentials: true });
+    return res.data;
+  } catch (err) {
+    return rejectWithValue(err.response?.data?.message || 'Failed to update cart item');
+  }
+});
+
+export const removeFromCart = createAsyncThunk('cart/removeFromCart', async (productId, { rejectWithValue }) => {
+  try {
+    const res = await axios.delete('/api/cart', { data: { productId }, withCredentials: true });
+    return res.data;
+  } catch (err) {
+    return rejectWithValue(err.response?.data?.message || 'Failed to remove from cart');
+  }
+});
+
+export const clearCart = createAsyncThunk('cart/clearCart', async (_, { rejectWithValue }) => {
+  try {
+    const res = await axios.delete('/api/cart/clear', { withCredentials: true });
+    return res.data;
+  } catch (err) {
+    return rejectWithValue(err.response?.data?.message || 'Failed to clear cart');
+  }
+});
 
 const initialState = {
   items: [],
   total: 0,
+  loading: false,
+  error: null,
 };
 
 const cartSlice = createSlice({
   name: 'cart',
   initialState,
-  reducers: {
-    addToCart: (state, action) => {
-      const existingItem = state.items.find(item => item._id === action.payload._id);
-      if (existingItem) {
-        existingItem.quantity += 1;
-      } else {
-        state.items.push({ ...action.payload, quantity: 1 });
-      }
-      state.total = state.items.reduce((total, item) => total + (item.price * item.quantity), 0);
-    },
-    removeFromCart: (state, action) => {
-      state.items = state.items.filter(item => item._id !== action.payload);
-      state.total = state.items.reduce((total, item) => total + (item.price * item.quantity), 0);
-    },
-    updateQuantity: (state, action) => {
-      const { id, quantity } = action.payload;
-      const item = state.items.find(item => item._id === id);
-      if (item) {
-        item.quantity = quantity;
-        state.total = state.items.reduce((total, item) => total + (item.price * item.quantity), 0);
-      }
-    },
-    clearCart: (state) => {
-      state.items = [];
-      state.total = 0;
-    },
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchCart.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchCart.fulfilled, (state, action) => {
+        state.loading = false;
+        state.items = action.payload;
+        state.total = action.payload.reduce((total, item) => total + (item.product.price * item.quantity), 0);
+      })
+      .addCase(fetchCart.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(addToCart.fulfilled, (state, action) => {
+        state.items = action.payload;
+        state.total = action.payload.reduce((total, item) => total + (item.product.price * item.quantity), 0);
+      })
+      .addCase(updateCartItem.fulfilled, (state, action) => {
+        state.items = action.payload;
+        state.total = action.payload.reduce((total, item) => total + (item.product.price * item.quantity), 0);
+      })
+      .addCase(removeFromCart.fulfilled, (state, action) => {
+        state.items = action.payload;
+        state.total = action.payload.reduce((total, item) => total + (item.product.price * item.quantity), 0);
+      })
+      .addCase(clearCart.fulfilled, (state, action) => {
+        state.items = action.payload;
+        state.total = 0;
+      });
   },
 });
 
-export const { addToCart, removeFromCart, updateQuantity, clearCart } = cartSlice.actions;
 export default cartSlice.reducer; 

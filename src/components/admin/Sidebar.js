@@ -3,7 +3,7 @@ import { Sidebar, Menu, MenuItem } from "react-pro-sidebar";
 import { Link } from "react-router-dom";
 import { FaBoxOpen } from "react-icons/fa";
 import { TbLayoutDashboard } from "react-icons/tb";
-import { MdOutlineSettings } from "react-icons/md";
+import { FaShoppingCart } from "react-icons/fa";
 import { LuUsersRound } from "react-icons/lu";
 import { IoAnalyticsOutline } from "react-icons/io5";
 import "./Sidebar.css"
@@ -40,16 +40,16 @@ function SidebarAdmin() {
             <FaBoxOpen className="sidebar-icon"/>
           </MenuItem>
 
+          <MenuItem className="menuitem" component={<Link to="/admin/orders" />}>
+            <FaShoppingCart className="sidebar-icon"/>
+          </MenuItem>
+
           <MenuItem className="menuitem" component={<Link to="/admin/userstable" />}>
             <LuUsersRound className="sidebar-icon"/>
           </MenuItem>
 
           <MenuItem className="menuitem" component={<Link to="/admin/analytics" />}>
             <IoAnalyticsOutline className="sidebar-icon"/>
-          </MenuItem>
-
-          <MenuItem className="menuitem" component={<Link to="/admin/setting" />}>
-            <MdOutlineSettings className="sidebar-icon"/>
           </MenuItem>
         </Menu>
       </Sidebar>    

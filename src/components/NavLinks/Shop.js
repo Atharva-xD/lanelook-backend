@@ -4,6 +4,7 @@ import { Star } from 'lucide-react';
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from 'react-redux';
 import { addToCart } from '../../redux/slices/cartSlice';
+import { useAuth } from '../../context/AuthContext';
 import axios from 'axios';
 import './Shop.css';
 import Footer from '../Footer';
@@ -19,6 +20,7 @@ const Shop = () => {
   const [addedToCart, setAddedToCart] = useState({});
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
 
   useEffect(() => {
     fetchProducts();
@@ -43,16 +45,12 @@ const Shop = () => {
   };
 
   const handleAddToCart = (product) => {
-    dispatch(addToCart({
-      _id: product._id,
-      name: product.name,
-      price: product.price,
-      image: product.image,
-      quantity: 1
-    }));
+    if (!isAuthenticated()) {
+      navigate('/signin');
+      return;
+    }
+    dispatch(addToCart({ productId: product._id, quantity: 1 }));
     setAddedToCart(prev => ({ ...prev, [product._id]: true }));
-    
-    // Reset the button state after 2 seconds
     setTimeout(() => {
       setAddedToCart(prev => ({ ...prev, [product._id]: false }));
     }, 2000);

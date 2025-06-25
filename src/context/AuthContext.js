@@ -1,11 +1,14 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import axios from 'axios';
+import { useDispatch } from 'react-redux';
+import { fetchCart, clearCart } from '../redux/slices/cartSlice';
 
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     // Check if user is logged in on mount
@@ -19,6 +22,8 @@ export const AuthProvider = ({ children }) => {
         setUser(parsedUser);
         // Set default authorization header
         axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        // Fetch cart for this user
+        dispatch(fetchCart());
       } catch (error) {
         console.error('Error parsing stored user:', error);
         // Clear invalid data
@@ -27,7 +32,7 @@ export const AuthProvider = ({ children }) => {
       }
     }
     setLoading(false);
-  }, []);
+  }, [dispatch]);
 
   const login = (userData) => {
     console.log('AuthContext login called with:', JSON.stringify(userData, null, 2));
@@ -52,6 +57,8 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem('token', userData.token);
     // Set default authorization header
     axios.defaults.headers.common['Authorization'] = `Bearer ${userData.token}`;
+    // Fetch cart for this user
+    dispatch(fetchCart());
   };
 
   const logout = () => {
@@ -61,6 +68,8 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('token');
     // Remove authorization header
     delete axios.defaults.headers.common['Authorization'];
+    // Clear cart on logout
+    dispatch(clearCart());
   };
 
   const isAuthenticated = () => {

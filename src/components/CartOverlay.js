@@ -1,18 +1,33 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { removeFromCart, updateQuantity } from '../redux/slices/cartSlice';
-import { Link } from "react-router-dom";
+import { removeFromCart, updateCartItem, clearCart } from '../redux/slices/cartSlice';
+import { Link, useNavigate } from "react-router-dom";
 import { FaTimes } from "react-icons/fa";
 import { motion } from "framer-motion";
 import "../index.css";
+import { useAuth } from '../context/AuthContext';
 
 function CartOverlay({ close }) {
   const cart = useSelector((state) => state.cart);
   const dispatch = useDispatch();
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
 
-  const handleQuantityChange = (id, newQuantity) => {
+  useEffect(() => {
+    if (!isAuthenticated()) {
+      dispatch(clearCart());
+      close();
+      navigate('/signin');
+    }
+  }, [isAuthenticated, dispatch, navigate, close]);
+
+  if (!isAuthenticated()) {
+    return null;
+  }
+
+  const handleQuantityChange = (productId, newQuantity) => {
     if (newQuantity < 1) return;
-    dispatch(updateQuantity({ id, quantity: newQuantity }));
+    dispatch(updateCartItem({ productId, quantity: newQuantity }));
   };
 
   const handleRemoveItem = (id) => {
@@ -41,25 +56,25 @@ function CartOverlay({ close }) {
             </div>
           ) : (
             cart.items.map((item) => (
-              <div key={item._id} className="cart-item">
+              <div key={item.product._id} className="cart-item">
                 <div className="img col-3 col-md-4">
                   <img
-                    src={item.image}
-                    alt={item.name}
+                    src={item.product.image}
+                    alt={item.product.name}
                     className="img-fluid"
                   />
                 </div>
                 <div className="item-details">
-                  <p className="p-title">{item.name}</p>
-                  <p className="p-price">₹{item.price}</p>
+                  <p className="p-title">{item.product.name}</p>
+                  <p className="p-price">₹{item.product.price}</p>
                   <div className="quantity-controls">
-                    <button onClick={() => handleQuantityChange(item._id, item.quantity - 1)}>-</button>
-                    <span>{item.quantity}</span>
-                    <button onClick={() => handleQuantityChange(item._id, item.quantity + 1)}>+</button>
+                    <button onClick={() => handleQuantityChange(item.product._id, item.quantity - 1)}>-</button>
+                    <input type="number" value={item.quantity} min="1" onChange={(e) => handleQuantityChange(item.product._id, parseInt(e.target.value))} />
+                    <button onClick={() => handleQuantityChange(item.product._id, item.quantity + 1)}>+</button>
                   </div>
                   <button 
                     className="remove-item"
-                    onClick={() => handleRemoveItem(item._id)}
+                    onClick={() => handleRemoveItem(item.product._id)}
                   >
                     Remove
                   </button>
@@ -76,7 +91,7 @@ function CartOverlay({ close }) {
             </div>
             <div className="summary-row total">
               <span>Total Amount:</span>
-              <span>₹{cart.total}</span>
+              <span>₹{cart.items.reduce((total, item) => total + (item.product.price * item.quantity), 0)}</span>
             </div>
           </div>
           <div className="btns">

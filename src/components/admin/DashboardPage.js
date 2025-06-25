@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import StatsCard from './SidebarComponents/StatsCard';
 import OrdersTable from './SidebarComponents/OrdersTable';
@@ -18,11 +18,8 @@ const AdminDashboard = () => {
   const [error, setError] = useState(null);
   const [dateRange, setDateRange] = useState('month');
 
-  useEffect(() => {
-    fetchDashboardData();
-  }, [dateRange]);
-
-  const fetchDashboardData = async () => {
+  // Use useCallback so the function reference is stable
+  const fetchDashboardData = useCallback(async () => {
     try {
       setLoading(true);
       // Fetch all required data in parallel
@@ -117,7 +114,11 @@ const AdminDashboard = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [dateRange]);
+
+  useEffect(() => {
+    fetchDashboardData();
+  }, [fetchDashboardData]);
 
   const getDateRange = (range) => {
     const now = new Date();
@@ -237,7 +238,7 @@ const AdminDashboard = () => {
             <div className="tables-section">
               <div className="table-card">
                 <h2>Recent Orders</h2>
-                <OrdersTable limit={5} />
+                <OrdersTable limit={5} refreshDashboard={fetchDashboardData} />
               </div>
               <div className="table-card">
                 <h2>Recent Users</h2>

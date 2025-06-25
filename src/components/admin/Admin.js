@@ -17,6 +17,7 @@ function Admin() {
         <Route path="/productstable" element={<ProductsTable />} />
         <Route path="/userstable" element={<UsersTable />} />
         <Route path="/analytics" element={<ProductsChart />} />
+        <Route path="/orders" element={<OrdersTable />} />
       </Routes>
     </AdminLayout>
   );

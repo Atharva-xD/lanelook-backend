@@ -3,6 +3,11 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const slotRoutes = require('./routes/slots');
+const cartRoutes = require('./routes/cart');
+const authRoutes = require('./routes/auth');
+const productRoutes = require('./routes/products');
+const userRoutes = require('./routes/users');
+const orderRoutes = require('./routes/orders');
 
 const app = express();
 
@@ -12,6 +17,11 @@ app.use(express.json());
 
 // Routes
 app.use('/api/slots', slotRoutes);
+app.use('/api/cart', cartRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/products', productRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/orders', orderRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

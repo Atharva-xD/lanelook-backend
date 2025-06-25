@@ -5,8 +5,11 @@ import './ProductDetails.css';
 import { FaTimes, FaHeart, FaRegHeart } from "react-icons/fa";
 import { useDispatch, useSelector } from 'react-redux';
 import { addToWishlist, removeFromWishlist } from '../../redux/slices/wishlistSlice';
+import { useAuth } from '../../context/AuthContext';
+import { addToCart } from '../../redux/slices/cartSlice';
 
-const ProductDetails = ({ product, onClose, onAddToCart }) => {
+const ProductDetails = ({ product, onClose }) => {
+  const { isAuthenticated } = useAuth();
   const dispatch = useDispatch();
   const wishlist = useSelector((state) => state.wishlist);
   const isInWishlist = wishlist.items.some(item => item._id === product._id);
@@ -17,6 +20,14 @@ const ProductDetails = ({ product, onClose, onAddToCart }) => {
     } else {
       dispatch(addToWishlist(product));
     }
+  };
+
+  const handleAddToCart = () => {
+    if (!isAuthenticated()) {
+      window.location.href = '/signin';
+      return;
+    }
+    dispatch(addToCart({ productId: product._id, quantity: 1 }));
   };
 
   const renderRatingStars = (rating) => {
@@ -170,7 +181,7 @@ const ProductDetails = ({ product, onClose, onAddToCart }) => {
               <div className="product-details-actions">
                 <button 
                   className="product-details-add-to-cart"
-                  onClick={() => onAddToCart(product)}
+                  onClick={handleAddToCart}
                 >
                   Add to Cart
                 </button>

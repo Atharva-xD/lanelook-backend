@@ -1,5 +1,5 @@
 // Book.js
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { usePopup } from "../../context/PopupContext";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
@@ -14,7 +14,6 @@ const Book = () => {
   const cartItems = useSelector((state) => state.cart.items);
   const [date, setDate] = useState('');
   const [time, setTime] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     from_name: '',
     from_email: '',
@@ -30,6 +29,12 @@ const Book = () => {
   // Get product information from location state or cart
   const productInfo = location.state?.productInfo;
   const selectedProducts = productInfo ? [productInfo] : cartItems;
+
+  useEffect(() => {
+    if (!isAuthenticated()) {
+      dispatch(clearCart());
+    }
+  }, [isAuthenticated, dispatch]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -101,13 +106,17 @@ const Book = () => {
 
     try {
       // Transform products to match the backend schema
-      const formattedProducts = selectedProducts.map(product => ({
-        id: product._id,
-        name: product.name,
-        image: product.image,
-        price: product.price,
-        productId: product._id
-      }));
+      const formattedProducts = selectedProducts.map(item => {
+        const p = item.product ? item.product : item;
+        return {
+          id: p._id,
+          name: p.name,
+          image: p.image,
+          price: p.price,
+          productId: p._id,
+          quantity: item.quantity || 1
+        };
+      });
 
       console.log('Sending booking request with data:', {
         date,
@@ -131,7 +140,7 @@ const Book = () => {
           customerEmail: formData.from_email,
           customerAddress: formData.address,
           selectedProducts: formattedProducts,
-          totalAmount: formattedProducts.reduce((sum, p) => sum + p.price, 0)
+          totalAmount: formattedProducts.reduce((sum, p) => sum + (p.price * (p.quantity || 1)), 0)
         })
       });
 
@@ -154,8 +163,8 @@ const Book = () => {
             to_email: formData.from_email,
             message: `Your appointment has been booked for ${date} at ${time}.`,
             address: formData.address,
-            products: selectedProducts.map(p => p.name).join(', '),
-            totalAmount: selectedProducts.reduce((sum, p) => sum + p.price, 0),
+            products: formattedProducts.map(p => p.name).join(', '),
+            totalAmount: formattedProducts.reduce((sum, p) => sum + (p.price * (p.quantity || 1)), 0),
             orderId: data.order._id // Add order ID to email
           };
 
@@ -219,31 +228,42 @@ const Book = () => {
     return maxDate.toISOString().split("T")[0];
   };
 
+  if (!isAuthenticated()) {
+    return <div className="empty-cart">Your cart is empty. Please <a href="/signin">sign in</a> to add products to your cart.</div>;
+  }
+
   return (
     <div className="book-container">
       <div className="book-content">
         <h1>Book an Appointment</h1>
         <p>Select your preferred date and time for your appointment.</p>
 
-        {selectedProducts.length > 0 && (
-          <div className="selected-products-info">
-            <h3>Selected Products</h3>
-            <div className="products-grid">
-              {selectedProducts.map((product) => (
-                <div key={product._id} className="product-preview">
-                  <img src={product.image} alt={product.name} />
-                  <div className="product-details">
-                    <h4>{product.name}</h4>
-                    <p>Price: ₹{product.price}</p>
+        {/* Improved Selected Products Section */}
+        <div className="selected-products-list">
+          {selectedProducts.map((item, idx) => {
+            const p = item.product ? item.product : item;
+            return (
+              <div className="selected-product-row" key={p._id || idx}>
+                <img src={p.image} alt={p.name} className="selected-product-thumb" />
+                <div className="selected-product-info">
+                  <div className="selected-product-name">{p.name}</div>
+                  <div className="selected-product-price">
+                    Price: ₹{p.price}
+                    {item.quantity > 1 && (
+                      <span className="selected-product-qty"> × {item.quantity} = ₹{p.price * item.quantity}</span>
+                    )}
                   </div>
                 </div>
-              ))}
-            </div>
-            <div className="total-amount">
-              <h4>Total Amount: ₹{selectedProducts.reduce((sum, p) => sum + p.price, 0)}</h4>
-            </div>
+              </div>
+            );
+          })}
+          <div className="total-amount">
+            Total Amount: ₹{selectedProducts.reduce((sum, item) => {
+              const p = item.product ? item.product : item;
+              return sum + (p.price * (item.quantity || 1));
+            }, 0)}
           </div>
-        )}
+        </div>
 
         <form ref={form} className="booking-form">
           <div className="form-group">
@@ -319,9 +339,8 @@ const Book = () => {
             type="button"
             className="book-button"
             onClick={handleBooking}
-            disabled={isSubmitting}
           >
-            {isSubmitting ? 'Booking...' : 'Book Appointment'}
+            Book Appointment
           </button>
         </form>
 

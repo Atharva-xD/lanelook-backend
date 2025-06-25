@@ -54,15 +54,18 @@ const getOrders = asyncMiddleware(async (req, res) => {
 });
 
 const updateOrderStatus = asyncMiddleware(async (req, res) => {
-  const order = await Order.findByIdAndUpdate(
-    req.params.id,
-    { orderStatus: req.body.status },
-    { new: true }
-  );
-
+  let order = await Order.findById(req.params.id);
   if (!order) {
     return res.status(404).json({ message: 'Order not found' });
   }
+
+  order.orderStatus = req.body.orderStatus;
+  await order.save();
+
+  // Populate user and orderItems.product for the updated order
+  order = await Order.findById(order._id)
+    .populate('user')
+    .populate('orderItems.product');
 
   res.json(order);
 });

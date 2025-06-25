@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './OrdersTable.css';
 
-const OrdersTable = () => {
+const OrdersTable = ({ limit, refreshDashboard }) => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -58,7 +58,7 @@ const OrdersTable = () => {
 
   const handleStatusChange = async (orderId, newStatus) => {
     try {
-      const response = await axios.put(`http://localhost:5000/api/orders/${orderId}`, 
+      const response = await axios.put(`http://localhost:5000/api/orders/status/${orderId}`, 
         { orderStatus: newStatus },
         {
           headers: {
@@ -71,6 +71,10 @@ const OrdersTable = () => {
       setOrders(orders.map(order => 
         order._id === orderId ? response.data : order
       ));
+      // Refresh dashboard stats instantly
+      if (typeof refreshDashboard === 'function') {
+        refreshDashboard();
+      }
     } catch (err) {
       console.error('Error updating order status:', err);
       setError('Failed to update order status');
@@ -91,51 +95,52 @@ const OrdersTable = () => {
   }
 
   return (
-    <div className="orders-table-container">
-      <table className="orders-table">
-        <thead>
-          <tr>
-            <th>Order ID</th>
-            <th>Date</th>
-            <th>Customer</th>
-            <th>Amount</th>
-            <th>Status</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {orders.map((order) => (
-            <tr key={order._id}>
-              <td>{order._id.slice(-6).toUpperCase()}</td>
-              <td>{formatDate(order.createdAt)}</td>
-              <td>{order.user?.name || 'N/A'}</td>
-              <td>₹{order.totalPrice.toFixed(2)}</td>
-              <td>
-                <select
-                  value={order.orderStatus}
-                  onChange={(e) => handleStatusChange(order._id, e.target.value)}
-                  className="status-select"
-                  style={{ backgroundColor: getStatusColor(order.orderStatus) }}
-                >
-                  <option value="pending">Pending</option>
-                  <option value="processing">Processing</option>
-                  <option value="completed">Completed</option>
-                  <option value="cancelled">Cancelled</option>
-                </select>
-              </td>
-              <td>
-                <button 
-                  className="view-details-btn"
-                  onClick={() => handleViewDetails(order)}
-                >
-                  View Details
-                </button>
-              </td>
+    <>
+      <div className="orders-table-container">
+        <table className="orders-table">
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Date</th>
+              <th>Customer</th>
+              <th>Amount</th>
+              <th>Status</th>
+              <th>Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-
+          </thead>
+          <tbody>
+            {orders.map((order) => (
+              <tr key={order._id}>
+                <td>{order._id.slice(-6).toUpperCase()}</td>
+                <td>{formatDate(order.createdAt)}</td>
+                <td>{order.user?.name || 'N/A'}</td>
+                <td>₹{order.totalPrice.toFixed(2)}</td>
+                <td>
+                  <select
+                    value={order.orderStatus}
+                    onChange={(e) => handleStatusChange(order._id, e.target.value)}
+                    className="status-select"
+                    style={{ backgroundColor: getStatusColor(order.orderStatus) }}
+                  >
+                    <option value="pending">Pending</option>
+                    <option value="processing">Processing</option>
+                    <option value="completed">Completed</option>
+                    <option value="cancelled">Cancelled</option>
+                  </select>
+                </td>
+                <td>
+                  <button 
+                    className="view-details-btn"
+                    onClick={() => handleViewDetails(order)}
+                  >
+                    View Details
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
       {showDetails && selectedOrder && (
         <div className="order-details-modal">
           <div className="modal-content">
@@ -180,7 +185,7 @@ const OrdersTable = () => {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 };
 
