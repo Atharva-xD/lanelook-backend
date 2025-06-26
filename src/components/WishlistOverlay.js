@@ -1,22 +1,46 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { removeFromWishlist } from '../redux/slices/wishlistSlice';
-import { addToCart as addToCartAction } from '../redux/slices/cartSlice';
-import { Link } from "react-router-dom";
+import { removeFromWishlist, fetchWishlist, clearWishlist } from '../redux/slices/wishlistSlice';
+import { addToCart } from '../redux/slices/cartSlice';
+import { Link, useNavigate } from "react-router-dom";
 import { FaTimes, FaHeart, FaShoppingCart } from "react-icons/fa";
 import { motion } from "framer-motion";
+import { useAuth } from '../context/AuthContext';
 
 function WishlistOverlay({ close }) {
     const wishlist = useSelector((state) => state.wishlist);
     const dispatch = useDispatch();
+    const { isAuthenticated } = useAuth();
+    const navigate = useNavigate();
 
-    const handleRemoveFromWishlist = (id) => {
-        dispatch(removeFromWishlist(id));
+    // Check authentication and redirect if not authenticated
+    useEffect(() => {
+        if (!isAuthenticated()) {
+            dispatch(clearWishlist());
+            close();
+            navigate('/signin');
+        }
+    }, [isAuthenticated, dispatch, navigate, close]);
+
+    // Fetch wishlist on component mount (only if authenticated)
+    useEffect(() => {
+        if (isAuthenticated()) {
+            dispatch(fetchWishlist());
+        }
+    }, [dispatch, isAuthenticated]);
+
+    // Don't render if not authenticated
+    if (!isAuthenticated()) {
+        return null;
+    }
+
+    const handleRemoveFromWishlist = (productId) => {
+        dispatch(removeFromWishlist(productId));
     };
 
     const handleAddToCart = (item) => {
-        dispatch(addToCartAction(item));
-        dispatch(removeFromWishlist(item._id));
+        dispatch(addToCart({ productId: item.product._id, quantity: 1 }));
+        dispatch(removeFromWishlist(item.product._id));
     };
 
     return (
@@ -35,24 +59,28 @@ function WishlistOverlay({ close }) {
                     />
                 </div>
                 <div className="wishlist-item-container">
-                    {wishlist.items.length === 0 ? (
+                    {wishlist.loading ? (
+                        <div className="loading-wishlist">
+                            <p>Loading wishlist...</p>
+                        </div>
+                    ) : wishlist.items.length === 0 ? (
                         <div className="empty-wishlist">
                             <FaHeart className="empty-icon" />
                             <p>Your wishlist is empty</p>
                         </div>
                     ) : (
                         wishlist.items.map((item) => (
-                            <div key={item._id} className="wishlist-item">
+                            <div key={item.product._id} className="wishlist-item">
                                 <div className="img col-3 col-md-4">
                                     <img
-                                        src={item.image}
-                                        alt={item.name}
+                                        src={item.product.images && item.product.images.length > 0 ? item.product.images[0] : item.product.image}
+                                        alt={item.product.name}
                                         className="img-fluid"
                                     />
                                 </div>
                                 <div className="item-details">
-                                    <p className="p-title">{item.name}</p>
-                                    <p className="p-price">₹{item.price}</p>
+                                    <p className="p-title">{item.product.name}</p>
+                                    <p className="p-price">₹{item.product.price}</p>
                                     <div className="item-actions">
                                         <button 
                                             className="add-to-cart-btn"
@@ -62,7 +90,7 @@ function WishlistOverlay({ close }) {
                                         </button>
                                         <button 
                                             className="remove-item"
-                                            onClick={() => handleRemoveFromWishlist(item._id)}
+                                            onClick={() => handleRemoveFromWishlist(item.product._id)}
                                         >
                                             Remove
                                         </button>

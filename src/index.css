@@ -56,6 +56,88 @@ body {
   color: #6c7ae0;
 }
 
+/* Button link styles for top navbar */
+.top-navbar .btn-link {
+  background: none;
+  border: none;
+  color: #e0e0e0;
+  margin-left: 20px;
+  text-decoration: none;
+  padding: 0 10px;
+  position: relative;
+  transition: color 0.3s ease;
+  cursor: pointer;
+  font-size: 14px;
+  font-family: inherit;
+  line-height: inherit;
+  display: inline;
+  outline: none;
+  box-shadow: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.top-navbar .btn-link:not(:first-child)::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background-color: #e0e0e0;
+}
+
+.top-navbar .btn-link:hover {
+  color: #6c7ae0;
+}
+
+.top-navbar .btn-link:focus {
+  outline: none;
+  color: #6c7ae0;
+}
+
+/* Specific styling for signIn-topbar buttons */
+.top-navbar .signIn-topbar {
+  background: none;
+  border: none;
+  color: #e0e0e0;
+  margin-left: 20px;
+  text-decoration: none;
+  padding: 0 10px;
+  position: relative;
+  transition: color 0.3s ease;
+  cursor: pointer;
+  font-size: 14px;
+  font-family: inherit;
+  line-height: inherit;
+  display: inline;
+  outline: none;
+  box-shadow: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.top-navbar .signIn-topbar:not(:first-child)::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background-color: #e0e0e0;
+}
+
+.top-navbar .signIn-topbar:hover {
+  color: #6c7ae0;
+}
+
+.top-navbar .signIn-topbar:focus {
+  outline: none;
+  color: #6c7ae0;
+}
+
 /* Main Navbar */
 .main-navbar {
   max-height: 70px;

@@ -1,33 +1,76 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Star } from 'lucide-react';
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import './ProductDetails.css';
-import { FaTimes, FaHeart, FaRegHeart } from "react-icons/fa";
+import { FaTimes, FaHeart, FaRegHeart, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { useDispatch, useSelector } from 'react-redux';
-import { addToWishlist, removeFromWishlist } from '../../redux/slices/wishlistSlice';
+import { addToWishlist, removeFromWishlist, fetchWishlist } from '../../redux/slices/wishlistSlice';
 import { useAuth } from '../../context/AuthContext';
 import { addToCart } from '../../redux/slices/cartSlice';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const ProductDetails = ({ product, onClose }) => {
   const { isAuthenticated } = useAuth();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const wishlist = useSelector((state) => state.wishlist);
-  const isInWishlist = wishlist.items.some(item => item._id === product._id);
+  const isInWishlist = wishlist.items.some(item => item.product._id === product._id);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isAddedToCart, setIsAddedToCart] = useState(false);
+
+  // Get all images for the product
+  const productImages = product.images && product.images.length > 0 
+    ? product.images 
+    : (product.image ? [product.image] : []);
+
+  // Fetch wishlist on component mount
+  useEffect(() => {
+    dispatch(fetchWishlist());
+  }, [dispatch]);
 
   const handleWishlistToggle = () => {
+    if (!isAuthenticated()) {
+      navigate('/signin');
+      return;
+    }
     if (isInWishlist) {
       dispatch(removeFromWishlist(product._id));
     } else {
-      dispatch(addToWishlist(product));
+      dispatch(addToWishlist({ productId: product._id }));
     }
   };
 
   const handleAddToCart = () => {
     if (!isAuthenticated()) {
-      window.location.href = '/signin';
+      navigate('/signin');
       return;
     }
     dispatch(addToCart({ productId: product._id, quantity: 1 }));
+    setIsAddedToCart(true);
+    setTimeout(() => {
+      setIsAddedToCart(false);
+    }, 2000);
+  };
+
+  const handleViewCart = (e) => {
+    e.stopPropagation();
+    navigate('/cart');
+  };
+
+  const nextImage = () => {
+    setCurrentImageIndex((prevIndex) => 
+      prevIndex === productImages.length - 1 ? 0 : prevIndex + 1
+    );
+  };
+
+  const prevImage = () => {
+    setCurrentImageIndex((prevIndex) => 
+      prevIndex === 0 ? productImages.length - 1 : prevIndex - 1
+    );
+  };
+
+  const selectImage = (index) => {
+    setCurrentImageIndex(index);
   };
 
   const renderRatingStars = (rating) => {
@@ -61,11 +104,59 @@ const ProductDetails = ({ product, onClose }) => {
               style={{ cursor: 'pointer', fontSize: '1.5rem', color: '#333' }}
             />
           </div>
-          <div className="product-details-body">
+          
+          {/* Image Section at Top */}
+          <div className="product-details-image-section">
             <div className="product-details-image-container">
-              <img src={product.image} alt={product.name} />
+              {/* Main Image Display */}
+              <div className="product-details-main-image">
+                <img 
+                  src={productImages[currentImageIndex]} 
+                  alt={`${product.name} - ${currentImageIndex + 1}`} 
+                />
+                
+                {/* Navigation Arrows - Only show if multiple images */}
+                {productImages.length > 1 && (
+                  <>
+                    <button 
+                      className="product-details-nav-btn product-details-nav-prev"
+                      onClick={prevImage}
+                    >
+                      <FaChevronLeft />
+                    </button>
+                    <button 
+                      className="product-details-nav-btn product-details-nav-next"
+                      onClick={nextImage}
+                    >
+                      <FaChevronRight />
+                    </button>
+                  </>
+                )}
+              </div>
+
+              {/* Image Thumbnails - Only show if multiple images */}
+              {productImages.length > 1 && (
+                <div className="product-details-thumbnails">
+                  {productImages.map((image, index) => (
+                    <div 
+                      key={index}
+                      className={`product-details-thumbnail ${index === currentImageIndex ? 'active' : ''}`}
+                      onClick={() => selectImage(index)}
+                    >
+                      <img 
+                        src={image} 
+                        alt={`${product.name} thumbnail ${index + 1}`}
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
-            <div className="product-details-info">
+          </div>
+
+          {/* Product Information Section */}
+          <div className="product-details-info-section">
+            <div className="product-details-basic-info">
               <div className="product-details-rating">
                 <div className="product-details-stars">
                   {renderRatingStars(4.5)}
@@ -75,10 +166,12 @@ const ProductDetails = ({ product, onClose }) => {
               <p className="product-details-price">₹{product.price}</p>
               <p className="product-details-category">Category: {product.category}</p>
               <p className="product-details-description">{product.description}</p>
-              
-              <div className="product-details-specifications">
-                <h3>Product Specifications</h3>
-                <div className="product-details-specs-grid">
+            </div>
+            
+            <div className="product-details-specifications">
+              <h3>Product Specifications</h3>
+              <div className="product-details-specs-grid">
+                <div className="product-details-specs-column">
                   <div className="product-details-spec-item">
                     <span className="product-details-spec-label">Product ID:</span>
                     <span className="product-details-spec-value">{product.productId}</span>
@@ -107,6 +200,9 @@ const ProductDetails = ({ product, onClose }) => {
                     <span className="product-details-spec-label">Weight:</span>
                     <span className="product-details-spec-value">{product.weight}</span>
                   </div>
+                </div>
+                
+                <div className="product-details-specs-column">
                   <div className="product-details-spec-item">
                     <span className="product-details-spec-label">Weight Group:</span>
                     <span className="product-details-spec-value">{product.weightGroup}</span>
@@ -135,6 +231,9 @@ const ProductDetails = ({ product, onClose }) => {
                     <span className="product-details-spec-label">Frame Style Secondary:</span>
                     <span className="product-details-spec-value">{product.frameStyleSecondary}</span>
                   </div>
+                </div>
+                
+                <div className="product-details-specs-column">
                   <div className="product-details-spec-item">
                     <span className="product-details-spec-label">Collection:</span>
                     <span className="product-details-spec-value">{product.collection}</span>
@@ -177,35 +276,52 @@ const ProductDetails = ({ product, onClose }) => {
                   </div>
                 </div>
               </div>
+            </div>
 
-              <div className="product-details-actions">
-                <button 
-                  className="product-details-add-to-cart"
-                  onClick={handleAddToCart}
-                >
-                  Add to Cart
-                </button>
-                <button 
-                  className={`product-details-wishlist ${isInWishlist ? 'active' : ''}`}
-                  onClick={handleWishlistToggle}
-                >
-                  {isInWishlist ? <FaHeart /> : <FaRegHeart />}
-                  {isInWishlist ? 'Remove from Wishlist' : 'Add to Wishlist'}
-                </button>
-                <Link 
-                  to="/book" 
-                  className="product-details-book-slot"
-                  state={{ productInfo: {
-                    id: product.id,
-                    name: product.name,
-                    image: product.image,
-                    price: product.price,
-                    productId: product.productId
-                  }}}
-                >
-                  Book Appointment
-                </Link>
-              </div>
+            <div className="product-details-actions">
+              <button 
+                className={`product-details-add-to-cart${isAddedToCart ? ' added' : ''}`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (isAddedToCart) {
+                    handleViewCart(e);
+                  } else {
+                    handleAddToCart();
+                  }
+                }}
+              >
+                <AnimatePresence mode="wait">
+                  <motion.span
+                    key={isAddedToCart ? 'view-cart' : 'add-to-cart'}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    {isAddedToCart ? 'View Cart' : 'Add to Cart'}
+                  </motion.span>
+                </AnimatePresence>
+              </button>
+              <button 
+                className={`product-details-wishlist ${isInWishlist ? 'active' : ''}`}
+                onClick={handleWishlistToggle}
+              >
+                {isInWishlist ? <FaHeart /> : <FaRegHeart />}
+                {isInWishlist ? 'Remove from Wishlist' : 'Add to Wishlist'}
+              </button>
+              <Link 
+                to="/book" 
+                className="product-details-book-slot"
+                state={{ productInfo: {
+                  id: product.id,
+                  name: product.name,
+                  image: product.image,
+                  price: product.price,
+                  productId: product.productId
+                }}}
+              >
+                Book Appointment
+              </Link>
             </div>
           </div>
         </div>

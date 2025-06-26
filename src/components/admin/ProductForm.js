@@ -10,6 +10,7 @@ const ProductForm = () => {
     description: '',
     price: '',
     image: '',
+    images: [''], // Initialize with one empty image field
     category: '',
     about: '',
     productId: '',
@@ -46,10 +47,53 @@ const ProductForm = () => {
     }));
   };
 
+  // Handle multiple images
+  const handleImageChange = (index, value) => {
+    const newImages = [...formData.images];
+    newImages[index] = value;
+    setFormData(prevState => ({
+      ...prevState,
+      images: newImages
+    }));
+  };
+
+  // Add new image field
+  const addImageField = () => {
+    setFormData(prevState => ({
+      ...prevState,
+      images: [...prevState.images, '']
+    }));
+  };
+
+  // Remove image field
+  const removeImageField = (index) => {
+    if (formData.images.length > 1) {
+      const newImages = formData.images.filter((_, i) => i !== index);
+      setFormData(prevState => ({
+        ...prevState,
+        images: newImages
+      }));
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('/api/products', formData);
+      // Filter out empty image URLs and ensure at least one image
+      const filteredImages = formData.images.filter(img => img.trim() !== '');
+      
+      if (filteredImages.length === 0) {
+        alert('At least one image is required');
+        return;
+      }
+
+      const productData = {
+        ...formData,
+        images: filteredImages,
+        image: filteredImages[0] // Set the first image as the primary image
+      };
+
+      const response = await axios.post('/api/products', productData);
       console.log('Product added successfully:', response.data);
       navigate('/admin/products');
     } catch (error) {
@@ -98,16 +142,41 @@ const ProductForm = () => {
             />
           </div>
 
+          {/* Multiple Images Section */}
           <div className="form-group">
-            <label htmlFor="image">Image URL</label>
-            <input
-              type="url"
-              id="image"
-              name="image"
-              value={formData.image}
-              onChange={handleChange}
-              required
-            />
+            <label>Product Images</label>
+            <div className="images-container">
+              {formData.images.map((imageUrl, index) => (
+                <div key={index} className="image-input-group">
+                  <input
+                    type="url"
+                    placeholder={`Image URL ${index + 1}`}
+                    value={imageUrl}
+                    onChange={(e) => handleImageChange(index, e.target.value)}
+                    required={index === 0}
+                  />
+                  {formData.images.length > 1 && (
+                    <button
+                      type="button"
+                      className="remove-image-btn"
+                      onClick={() => removeImageField(index)}
+                    >
+                      Remove
+                    </button>
+                  )}
+                </div>
+              ))}
+              <button
+                type="button"
+                className="add-image-btn"
+                onClick={addImageField}
+              >
+                + Add Another Image
+              </button>
+            </div>
+            <small className="form-help-text">
+              First image will be used as the primary image in the shop
+            </small>
           </div>
 
           <div className="form-group">

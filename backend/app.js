@@ -4,6 +4,7 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const slotRoutes = require('./routes/slots');
 const cartRoutes = require('./routes/cart');
+const wishlistRoutes = require('./routes/wishlist');
 const authRoutes = require('./routes/auth');
 const productRoutes = require('./routes/products');
 const userRoutes = require('./routes/users');
@@ -18,6 +19,7 @@ app.use(express.json());
 // Routes
 app.use('/api/slots', slotRoutes);
 app.use('/api/cart', cartRoutes);
+app.use('/api/wishlist', wishlistRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/users', userRoutes);

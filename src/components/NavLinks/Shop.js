@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Star } from 'lucide-react';
-import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { addToCart } from '../../redux/slices/cartSlice';
 import { useAuth } from '../../context/AuthContext';
 import axios from 'axios';
@@ -19,8 +19,8 @@ const Shop = () => {
   const [categories, setCategories] = useState([]);
   const [addedToCart, setAddedToCart] = useState({});
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchProducts();
@@ -188,7 +188,7 @@ const Shop = () => {
                 >
                   <div className="product-image-container">
                     <img
-                      src={product.image}
+                      src={product.images && product.images.length > 0 ? product.images[0] : product.image}
                       alt={product.name}
                       className="product-image"
                     />

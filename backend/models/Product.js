@@ -19,6 +19,12 @@ const productSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Please provide a product image']
   },
+  images: {
+    type: [String],
+    default: function() {
+      return this.image ? [this.image] : [];
+    }
+  },
   category: {
     type: String,
     required: [true, 'Please provide a product category'],
@@ -129,12 +135,21 @@ const productSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Virtual field for product image URL
-productSchema.virtual('imageURL').get(function() {
-  return `${process.env.BASE_URL}/uploads/products/${this.images[0]}`;
+productSchema.pre('save', function(next) {
+  if (!this.images || this.images.length === 0) {
+    this.images = this.image ? [this.image] : [];
+  }
+  next();
 });
 
-// Index for better query performance
+productSchema.virtual('imageURL').get(function() {
+  return `${process.env.BASE_URL}/uploads/products/${this.images[0] || this.image}`;
+});
+
+productSchema.virtual('primaryImage').get(function() {
+  return this.images && this.images.length > 0 ? this.images[0] : this.image;
+});
+
 productSchema.index({ name: 'text', description: 'text', category: 'text' });
 
 const Product = mongoose.model('Product', productSchema);

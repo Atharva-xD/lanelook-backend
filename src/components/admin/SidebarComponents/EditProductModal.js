@@ -8,6 +8,7 @@ const EditProductModal = ({ product, onClose, onUpdate }) => {
     description: "",
     price: "",
     image: "",
+    images: [""],
     category: "",
     about: "",
     productId: "",
@@ -40,11 +41,17 @@ const EditProductModal = ({ product, onClose, onUpdate }) => {
 
   useEffect(() => {
     if (product) {
+      // Handle both old single image and new multiple images format
+      const images = product.images && product.images.length > 0 
+        ? product.images 
+        : (product.image ? [product.image] : [""]);
+
       setFormData({
         name: product.name || "",
         description: product.description || "",
         price: product.price || "",
         image: product.image || "",
+        images: images,
         category: product.category || "",
         about: product.about || "",
         productId: product.productId || "",
@@ -83,28 +90,71 @@ const EditProductModal = ({ product, onClose, onUpdate }) => {
     }));
   };
 
+  // Handle multiple images
+  const handleImageChange = (index, value) => {
+    const newImages = [...formData.images];
+    newImages[index] = value;
+    setFormData(prevState => ({
+      ...prevState,
+      images: newImages
+    }));
+  };
+
+  // Add new image field
+  const addImageField = () => {
+    setFormData(prevState => ({
+      ...prevState,
+      images: [...prevState.images, ""]
+    }));
+  };
+
+  // Remove image field
+  const removeImageField = (index) => {
+    if (formData.images.length > 1) {
+      const newImages = formData.images.filter((_, i) => i !== index);
+      setFormData(prevState => ({
+        ...prevState,
+        images: newImages
+      }));
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setSuccess("");
 
     try {
-      const response = await axios.put(`/api/products/${product._id}`, formData);
+      // Filter out empty image URLs and ensure at least one image
+      const filteredImages = formData.images.filter(img => img.trim() !== "");
+      
+      if (filteredImages.length === 0) {
+        setError("At least one image is required");
+        return;
+      }
+
+      const productData = {
+        ...formData,
+        images: filteredImages,
+        image: filteredImages[0] // Set the first image as the primary image
+      };
+
+      const response = await axios.put(`/api/products/${product._id}`, productData);
       setSuccess("Product updated successfully!");
       onUpdate(response.data);
-      setTimeout(() => {
-        onClose();
-      }, 1500);
+      onClose();
     } catch (err) {
       setError(err.response?.data?.message || "Error updating product");
     }
   };
 
+  if (!product) return null;
+
   return (
     <div className="modal-overlay">
       <div className="modal-content">
         <div className="modal-header">
-          <h3>Edit Product</h3>
+          <h2>Edit Product</h2>
           <button className="close-button" onClick={onClose}>&times;</button>
         </div>
         <div className="modal-body">
@@ -149,16 +199,41 @@ const EditProductModal = ({ product, onClose, onUpdate }) => {
                 />
               </div>
 
+              {/* Multiple Images Section */}
               <div className="form-group">
-                <label htmlFor="image">Image URL</label>
-                <input
-                  type="url"
-                  id="image"
-                  name="image"
-                  value={formData.image}
-                  onChange={handleChange}
-                  required
-                />
+                <label>Product Images</label>
+                <div className="images-container">
+                  {formData.images.map((imageUrl, index) => (
+                    <div key={index} className="image-input-group">
+                      <input
+                        type="url"
+                        placeholder={`Image URL ${index + 1}`}
+                        value={imageUrl}
+                        onChange={(e) => handleImageChange(index, e.target.value)}
+                        required={index === 0}
+                      />
+                      {formData.images.length > 1 && (
+                        <button
+                          type="button"
+                          className="remove-image-btn"
+                          onClick={() => removeImageField(index)}
+                        >
+                          Remove
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    className="add-image-btn"
+                    onClick={addImageField}
+                  >
+                    + Add Another Image
+                  </button>
+                </div>
+                <small className="form-help-text">
+                  First image will be used as the primary image in the shop
+                </small>
               </div>
 
               <div className="form-group">

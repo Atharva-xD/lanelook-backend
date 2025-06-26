@@ -42,10 +42,9 @@ const Navbar = () => {
     signIn: false,
     register: false
   });
-  const [cartVisible, setCartVisible] = useState(false);
   const [showSignIn, setShowSignIn] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
-  const { user, logout } = useAuth();
+  const { user, logout, isAuthenticated } = useAuth();
   const [activeTab, setActiveTab] = useState("home");
 
   const location = useLocation();
@@ -99,8 +98,12 @@ const Navbar = () => {
   }, [toggleOverlay]);
 
   const handleWishlistClick = useCallback(() => {
+    if (!isAuthenticated()) {
+      navigate('/signin');
+      return;
+    }
     toggleOverlay('wishlist', BODY_CLASSES.WISHLIST);
-  }, [toggleOverlay]);
+  }, [toggleOverlay, navigate, isAuthenticated]);
 
   const handleSignInClick = useCallback(() => {
     setShowSignIn(true);
@@ -159,14 +162,6 @@ const Navbar = () => {
     }
   }, []);
 
-  const handleViewCartClick = useCallback(() => {
-    navigate("/cart");
-  }, [navigate]);
-
-  const toggleCartVisibility = useCallback(() => {
-    setCartVisible(prev => !prev);
-  }, []);
-
   // Animation variants
   const iconVariants = {
     hover: { scale: 1.1 }
@@ -179,24 +174,24 @@ const Navbar = () => {
         <div className="container d-flex justify-content-between">
           <span>Free shipping for standard orders over ₹5000</span>
           <div>
-            <a href="#">Help & FAQs</a>
+            <button className="btn-link">Help & FAQs</button>
             {user ? (
               <div className="d-inline-block">
                 <span className="me-3">{user.username || 'Loading...'}</span>
-                <a href="#" onClick={handleLogout}>Logout</a>
+                <button className="btn-link" onClick={handleLogout}>Logout</button>
               </div>
             ) : (
               <>
-                <a className="signIn-topbar me-3" onClick={handleSignInClick}>
+                <button className="signIn-topbar me-3" onClick={handleSignInClick}>
                   Sign In
-                </a>
-                <a className="signIn-topbar" onClick={handleRegisterClick}>
+                </button>
+                <button className="signIn-topbar" onClick={handleRegisterClick}>
                   Register
-                </a>
+                </button>
               </>
             )}
-            <a href="#">EN</a>
-            <a href="#">India</a>
+            <button className="btn-link">EN</button>
+            <button className="btn-link">India</button>
           </div>
         </div>
       </div>
