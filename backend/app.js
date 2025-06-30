@@ -13,7 +13,14 @@ const orderRoutes = require('./routes/orders');
 const app = express();
 
 // Middleware
-app.use(cors());
+const allowedOrigins = [
+  'https://lanelook-backend.vercel.app', // Vercel frontend
+  // 'http://localhost:3000', // Uncomment for local development
+];
+app.use(cors({
+  origin: allowedOrigins,
+  credentials: true,
+}));
 app.use(express.json());
 
 // Routes
