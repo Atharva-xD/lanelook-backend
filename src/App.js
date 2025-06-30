@@ -15,6 +15,7 @@ import SignIn from './components/SignIn';
 import ShoppingCart from './components/ShoppingCart';
 import Admin from './components/admin/Admin';
 import Services from './components/Services';
+import Register from './components/Register';
 
 // Protected Route component
 const ProtectedRoute = ({ children, requireAdmin = false }) => {
@@ -47,6 +48,7 @@ const AppRoutes = () => {
         <Route path="/contact" element={<Contact />} />
         <Route path="/book" element={<Book />} />
         <Route path="/signin" element={<SignIn close={() => navigate('/')} />} />
+        <Route path="/register" element={<Register close={() => navigate('/')} />} />
         <Route path="/cart" element={<ShoppingCart />} />
         <Route
           path="/admin/*"

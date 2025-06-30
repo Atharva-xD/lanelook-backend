@@ -213,7 +213,7 @@ const Register = ({ close, onLogin }) => {
 
             <div className="forgot-password mt-3">
               <span>Already have an account? </span>
-              <button type="button" className="link-button" onClick={() => { if (typeof close === 'function') { close(); } }}>Sign In</button>
+              <button type="button" className="link-button" onClick={() => navigate('/signin')}>Sign In</button>
             </div>
           </Form>
         </div>

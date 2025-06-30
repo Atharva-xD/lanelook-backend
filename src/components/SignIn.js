@@ -147,7 +147,7 @@ const Signin = ({ close, onLogin }) => {
             </div>
 
             <div className="forgot-password mt-3">
-              <button type="button" className="link-button" onClick={() => { /* TODO: Add forgot password logic */ }}>Forgot Password?</button>
+              <button type="button" className="link-button" onClick={() => navigate('/register')}>Register</button>
             </div>
           </Form>
         </div>
