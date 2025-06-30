@@ -1,10 +1,12 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 // Thunks for backend cart API
 export const fetchCart = createAsyncThunk('cart/fetchCart', async (_, { rejectWithValue }) => {
   try {
-    const res = await axios.get('/api/cart', { withCredentials: true });
+    const res = await axios.get(`${API_URL}/api/cart`, { withCredentials: true });
     return res.data;
   } catch (err) {
     return rejectWithValue(err.response?.data?.message || 'Failed to fetch cart');
@@ -13,7 +15,7 @@ export const fetchCart = createAsyncThunk('cart/fetchCart', async (_, { rejectWi
 
 export const addToCart = createAsyncThunk('cart/addToCart', async ({ productId, quantity = 1 }, { rejectWithValue }) => {
   try {
-    const res = await axios.post('/api/cart', { productId, quantity }, { withCredentials: true });
+    const res = await axios.post(`${API_URL}/api/cart`, { productId, quantity }, { withCredentials: true });
     return res.data;
   } catch (err) {
     return rejectWithValue(err.response?.data?.message || 'Failed to add to cart');
@@ -22,7 +24,7 @@ export const addToCart = createAsyncThunk('cart/addToCart', async ({ productId, 
 
 export const updateCartItem = createAsyncThunk('cart/updateCartItem', async ({ productId, quantity }, { rejectWithValue }) => {
   try {
-    const res = await axios.put('/api/cart', { productId, quantity }, { withCredentials: true });
+    const res = await axios.put(`${API_URL}/api/cart`, { productId, quantity }, { withCredentials: true });
     return res.data;
   } catch (err) {
     return rejectWithValue(err.response?.data?.message || 'Failed to update cart item');
@@ -31,7 +33,7 @@ export const updateCartItem = createAsyncThunk('cart/updateCartItem', async ({ p
 
 export const removeFromCart = createAsyncThunk('cart/removeFromCart', async (productId, { rejectWithValue }) => {
   try {
-    const res = await axios.delete('/api/cart', { data: { productId }, withCredentials: true });
+    const res = await axios.delete(`${API_URL}/api/cart`, { data: { productId }, withCredentials: true });
     return res.data;
   } catch (err) {
     return rejectWithValue(err.response?.data?.message || 'Failed to remove from cart');
@@ -40,7 +42,7 @@ export const removeFromCart = createAsyncThunk('cart/removeFromCart', async (pro
 
 export const clearCart = createAsyncThunk('cart/clearCart', async (_, { rejectWithValue }) => {
   try {
-    const res = await axios.delete('/api/cart/clear', { withCredentials: true });
+    const res = await axios.delete(`${API_URL}/api/cart/clear`, { withCredentials: true });
     return res.data;
   } catch (err) {
     return rejectWithValue(err.response?.data?.message || 'Failed to clear cart');

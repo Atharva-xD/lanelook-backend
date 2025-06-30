@@ -18,6 +18,7 @@ const Register = ({ close, onLogin }) => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
+  const API_URL = process.env.REACT_APP_API_URL;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -73,7 +74,7 @@ const Register = ({ close, onLogin }) => {
 
     setLoading(true);
     try {
-      const response = await axios.post('/api/auth/register', {
+      const response = await axios.post(`${API_URL}/api/auth/register`, {
         name: formData.name,
         username: formData.username,
         email: formData.email,
@@ -212,12 +213,7 @@ const Register = ({ close, onLogin }) => {
 
             <div className="forgot-password mt-3">
               <span>Already have an account? </span>
-              <a href="#" onClick={(e) => {
-                e.preventDefault();
-                if (typeof close === 'function') {
-                  close();
-                }
-              }}>Sign In</a>
+              <button type="button" className="link-button" onClick={() => { if (typeof close === 'function') { close(); } }}>Sign In</button>
             </div>
           </Form>
         </div>

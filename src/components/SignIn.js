@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './Signin.css';
-import { Form, Button, Container } from 'react-bootstrap';
+import { Form, Button } from 'react-bootstrap';
 import { FaTimes } from "react-icons/fa";
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -13,6 +13,7 @@ const Signin = ({ close, onLogin }) => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
+  const API_URL = process.env.REACT_APP_API_URL;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -52,7 +53,7 @@ const Signin = ({ close, onLogin }) => {
     setLoading(true);
     try {
       console.log('Attempting login with:', { email });
-      const response = await axios.post('/api/auth/login', {
+      const response = await axios.post(`${API_URL}/api/auth/login`, {
         email,
         password
       });
@@ -146,7 +147,7 @@ const Signin = ({ close, onLogin }) => {
             </div>
 
             <div className="forgot-password mt-3">
-              <a href="#" onClick={(e) => e.preventDefault()}>Forgot Password?</a>
+              <button type="button" className="link-button" onClick={() => { /* TODO: Add forgot password logic */ }}>Forgot Password?</button>
             </div>
           </Form>
         </div>

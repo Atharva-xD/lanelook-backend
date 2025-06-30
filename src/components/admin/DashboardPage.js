@@ -7,6 +7,8 @@ import ProductsChart from './SidebarComponents/ProductsChart';
 import SidebarAdmin from './Sidebar';
 import './Admin.css';
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 const AdminDashboard = () => {
   const [stats, setStats] = useState({
     totalUsers: 0,
@@ -18,23 +20,23 @@ const AdminDashboard = () => {
   const [error, setError] = useState(null);
   const [dateRange, setDateRange] = useState('month');
 
-  // Use useCallback so the function reference is stable
   const fetchDashboardData = useCallback(async () => {
+    setLoading(true);
+    setError(null);
     try {
-      setLoading(true);
       // Fetch all required data in parallel
       const [usersRes, ordersRes, productsRes] = await Promise.all([
-        axios.get('/api/users', {
+        axios.get(`${API_URL}/api/users`, {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`
           }
         }),
-        axios.get('/api/orders', {
+        axios.get(`${API_URL}/api/orders`, {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`
           }
         }),
-        axios.get('/api/products', {
+        axios.get(`${API_URL}/api/products`, {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`
           }
@@ -55,7 +57,14 @@ const AdminDashboard = () => {
 
       // Calculate trends (comparing with previous period)
       const currentPeriod = getDateRange(dateRange);
-      const previousPeriod = getPreviousPeriod(dateRange);
+      const getPreviousPeriod = (range) => {
+        const current = getDateRange(range);
+        const duration = current.end - current.start;
+        return {
+          start: new Date(current.start - duration),
+          end: current.start
+        };
+      };
 
       const currentPeriodSales = orders
         .filter(order => new Date(order.createdAt) >= currentPeriod.start)
@@ -63,7 +72,7 @@ const AdminDashboard = () => {
 
       const previousPeriodSales = orders
         .filter(order => 
-          new Date(order.createdAt) >= previousPeriod.start && 
+          new Date(order.createdAt) >= getPreviousPeriod(dateRange).start && 
           new Date(order.createdAt) < currentPeriod.start
         )
         .reduce((sum, order) => sum + order.totalPrice, 0);
@@ -74,7 +83,7 @@ const AdminDashboard = () => {
       const usersTrend = calculateTrend(
         users.filter(u => new Date(u.createdAt) >= currentPeriod.start).length,
         users.filter(u => 
-          new Date(u.createdAt) >= previousPeriod.start && 
+          new Date(u.createdAt) >= getPreviousPeriod(dateRange).start && 
           new Date(u.createdAt) < currentPeriod.start
         ).length
       );
@@ -82,7 +91,7 @@ const AdminDashboard = () => {
       const ordersTrend = calculateTrend(
         activeOrders,
         orders.filter(o => 
-          new Date(o.createdAt) >= previousPeriod.start && 
+          new Date(o.createdAt) >= getPreviousPeriod(dateRange).start && 
           new Date(o.createdAt) < currentPeriod.start &&
           ['pending', 'processing'].includes(o.orderStatus)
         ).length
@@ -91,7 +100,7 @@ const AdminDashboard = () => {
       const productsTrend = calculateTrend(
         products.filter(p => new Date(p.createdAt) >= currentPeriod.start).length,
         products.filter(p => 
-          new Date(p.createdAt) >= previousPeriod.start && 
+          new Date(p.createdAt) >= getPreviousPeriod(dateRange).start && 
           new Date(p.createdAt) < currentPeriod.start
         ).length
       );
@@ -142,15 +151,6 @@ const AdminDashboard = () => {
     }
 
     return { start, end: now };
-  };
-
-  const getPreviousPeriod = (range) => {
-    const current = getDateRange(range);
-    const duration = current.end - current.start;
-    return {
-      start: new Date(current.start - duration),
-      end: current.start
-    };
   };
 
   const calculateTrend = (current, previous) => {

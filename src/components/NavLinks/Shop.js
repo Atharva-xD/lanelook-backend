@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Star } from 'lucide-react';
 import { useDispatch } from 'react-redux';
@@ -21,14 +21,11 @@ const Shop = () => {
   const dispatch = useDispatch();
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
+  const API_URL = process.env.REACT_APP_API_URL;
 
-  useEffect(() => {
-    fetchProducts();
-  }, []);
-
-  const fetchProducts = async () => {
+  const fetchProducts = useCallback(async () => {
     try {
-      const response = await axios.get('/api/products');
+      const response = await axios.get(`${API_URL}/api/products`);
       setProducts(response.data);
       // Extract unique categories from products
       const uniqueCategories = [...new Set(response.data.map(product => product.category))];
@@ -42,7 +39,11 @@ const Shop = () => {
     } catch (error) {
       console.error('Error fetching products:', error);
     }
-  };
+  }, [API_URL]);
+
+  useEffect(() => {
+    fetchProducts();
+  }, [fetchProducts]);
 
   const handleAddToCart = (product) => {
     if (!isAuthenticated()) {

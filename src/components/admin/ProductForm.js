@@ -5,6 +5,7 @@ import './ProductForm.css';
 
 const ProductForm = () => {
   const navigate = useNavigate();
+  const API_URL = process.env.REACT_APP_API_URL;
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -93,7 +94,7 @@ const ProductForm = () => {
         image: filteredImages[0] // Set the first image as the primary image
       };
 
-      const response = await axios.post('/api/products', productData);
+      const response = await axios.post(`${API_URL}/api/products`, productData);
       console.log('Product added successfully:', response.data);
       navigate('/admin/products');
     } catch (error) {

@@ -3,6 +3,8 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import './UsersTable.css';
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 const UsersTable = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -31,7 +33,7 @@ const UsersTable = () => {
 
       console.log('Making API request with token:', token.substring(0, 20) + '...');
       
-      const response = await axios.get('/api/users', {
+      const response = await axios.get(`${API_URL}/api/users`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -93,7 +95,7 @@ const UsersTable = () => {
       }
 
       const response = await axios.put(
-        `/api/users/${userId}`,
+        `${API_URL}/api/users/${userId}`,
         { role: newRole },
         {
           headers: {

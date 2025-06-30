@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './OrdersTable.css';
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 const OrdersTable = ({ limit, refreshDashboard }) => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -16,7 +18,7 @@ const OrdersTable = ({ limit, refreshDashboard }) => {
   const fetchOrders = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('/api/orders', {
+      const response = await axios.get(`${API_URL}/api/orders`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -58,7 +60,7 @@ const OrdersTable = ({ limit, refreshDashboard }) => {
 
   const handleStatusChange = async (orderId, newStatus) => {
     try {
-      const response = await axios.put(`/api/orders/status/${orderId}`, 
+      const response = await axios.put(`${API_URL}/api/orders/status/${orderId}`, 
         { orderStatus: newStatus },
         {
           headers: {

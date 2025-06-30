@@ -6,6 +6,8 @@ import EditProductModal from './EditProductModal';
 import axios from 'axios';
 import './ProductsTable.css';
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 const ProductsTable = () => {
   const [activeTab, setActiveTab] = useState('details');
   const [products, setProducts] = useState([]);
@@ -22,7 +24,7 @@ const ProductsTable = () => {
 
   const fetchProducts = async () => {
     try {
-      const response = await axios.get('/api/products');
+      const response = await axios.get(`${API_URL}/api/products`);
       setProducts(response.data);
       setLoading(false);
     } catch (err) {
@@ -39,7 +41,7 @@ const ProductsTable = () => {
   // Function to update product details
   const handleUpdateProduct = async (updatedProduct) => {
     try {
-      const response = await axios.put(`/api/products/${updatedProduct._id}`, updatedProduct);
+      const response = await axios.put(`${API_URL}/api/products/${updatedProduct._id}`, updatedProduct);
       const updatedProducts = products.map((product) =>
         product._id === updatedProduct._id ? response.data : product
       );
@@ -62,7 +64,7 @@ const ProductsTable = () => {
   // Function to delete a product
   const handleDeleteProduct = async () => {
     try {
-      await axios.delete(`/api/products/${deleteConfirm.id}`);
+      await axios.delete(`${API_URL}/api/products/${deleteConfirm.id}`);
       setProducts(products.filter((product) => product._id !== deleteConfirm.id));
       setDeleteConfirm({ show: false, id: null });
     } catch (err) {

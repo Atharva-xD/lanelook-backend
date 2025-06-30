@@ -29,6 +29,7 @@ const Book = () => {
   // Get product information from location state or cart
   const productInfo = location.state?.productInfo;
   const selectedProducts = productInfo ? [productInfo] : cartItems;
+  const API_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     if (!isAuthenticated()) {
@@ -127,7 +128,7 @@ const Book = () => {
         products: formattedProducts
       });
 
-      const response = await fetch('/api/slots/book', {
+      const response = await fetch(`${API_URL}/api/slots/book`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

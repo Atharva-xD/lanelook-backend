@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 const ProductsChart = ({ dateRange }) => {
   const [chartData, setChartData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -18,69 +20,68 @@ const ProductsChart = ({ dateRange }) => {
   }, []);
 
   useEffect(() => {
+    const fetchChartData = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get(`${API_URL}/api/orders`);
+        const orders = response.data;
+
+        // Get date range
+        const now = new Date();
+        const startDate = new Date();
+        
+        switch (dateRange) {
+          case 'today':
+            startDate.setHours(0, 0, 0, 0);
+            break;
+          case 'week':
+            startDate.setDate(now.getDate() - 7);
+            break;
+          case 'month':
+            startDate.setMonth(now.getMonth() - 1);
+            break;
+          case 'year':
+            startDate.setFullYear(now.getFullYear() - 1);
+            break;
+          default:
+            startDate.setMonth(now.getMonth() - 1);
+        }
+
+        // Filter orders within date range
+        const filteredOrders = orders.filter(order => 
+          new Date(order.createdAt) >= startDate && 
+          new Date(order.createdAt) <= now
+        );
+
+        // Group orders by date
+        const groupedData = filteredOrders.reduce((acc, order) => {
+          const date = new Date(order.createdAt).toLocaleDateString();
+          if (!acc[date]) {
+            acc[date] = {
+              date,
+              sales: 0,
+              orders: 0
+            };
+          }
+          acc[date].sales += order.totalPrice;
+          acc[date].orders += 1;
+          return acc;
+        }, {});
+
+        // Convert to array and sort by date
+        const chartData = Object.values(groupedData)
+          .sort((a, b) => new Date(a.date) - new Date(b.date));
+
+        setChartData(chartData);
+      } catch (err) {
+        setError('Error fetching chart data');
+        console.error('Chart data fetch error:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
     fetchChartData();
   }, [dateRange]);
-
-  const fetchChartData = async () => {
-    try {
-      setLoading(true);
-      const response = await axios.get('/api/orders');
-      const orders = response.data;
-
-      // Get date range
-      const now = new Date();
-      const startDate = new Date();
-      
-      switch (dateRange) {
-        case 'today':
-          startDate.setHours(0, 0, 0, 0);
-          break;
-        case 'week':
-          startDate.setDate(now.getDate() - 7);
-          break;
-        case 'month':
-          startDate.setMonth(now.getMonth() - 1);
-          break;
-        case 'year':
-          startDate.setFullYear(now.getFullYear() - 1);
-          break;
-        default:
-          startDate.setMonth(now.getMonth() - 1);
-      }
-
-      // Filter orders within date range
-      const filteredOrders = orders.filter(order => 
-        new Date(order.createdAt) >= startDate && 
-        new Date(order.createdAt) <= now
-      );
-
-      // Group orders by date
-      const groupedData = filteredOrders.reduce((acc, order) => {
-        const date = new Date(order.createdAt).toLocaleDateString();
-        if (!acc[date]) {
-          acc[date] = {
-            date,
-            sales: 0,
-            orders: 0
-          };
-        }
-        acc[date].sales += order.totalPrice;
-        acc[date].orders += 1;
-        return acc;
-      }, {});
-
-      // Convert to array and sort by date
-      const chartData = Object.values(groupedData)
-        .sort((a, b) => new Date(a.date) - new Date(b.date));
-
-      setChartData(chartData);
-    } catch (err) {
-      setError('Error fetching chart data');
-      console.error('Chart data fetch error:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const getChartHeight = () => {
     if (windowWidth <= 360) return 120;

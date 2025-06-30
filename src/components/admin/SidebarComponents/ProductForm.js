@@ -3,6 +3,8 @@ import React, { useState } from "react";
 import "./ProductForm.css";
 import axios from 'axios';
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 const ProductForm = ({ onAddProduct }) => {
   const [formData, setFormData] = useState({
     name: "",
@@ -97,7 +99,7 @@ const ProductForm = ({ onAddProduct }) => {
         image: filteredImages[0] // Set the first image as the primary image
       };
 
-      const response = await axios.post('/api/products', productData);
+      const response = await axios.post(`${API_URL}/api/products`, productData);
       setSuccess("Product added successfully!");
       onAddProduct(response.data);
       

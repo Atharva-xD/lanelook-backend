@@ -1,10 +1,12 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 // Thunks for backend wishlist API
 export const fetchWishlist = createAsyncThunk('wishlist/fetchWishlist', async (_, { rejectWithValue }) => {
   try {
-    const res = await axios.get('/api/wishlist', { withCredentials: true });
+    const res = await axios.get(`${API_URL}/api/wishlist`, { withCredentials: true });
     return res.data;
   } catch (err) {
     return rejectWithValue(err.response?.data?.message || 'Failed to fetch wishlist');
@@ -13,7 +15,7 @@ export const fetchWishlist = createAsyncThunk('wishlist/fetchWishlist', async (_
 
 export const addToWishlist = createAsyncThunk('wishlist/addToWishlist', async ({ productId }, { rejectWithValue }) => {
   try {
-    const res = await axios.post('/api/wishlist', { productId }, { withCredentials: true });
+    const res = await axios.post(`${API_URL}/api/wishlist`, { productId }, { withCredentials: true });
     return res.data;
   } catch (err) {
     return rejectWithValue(err.response?.data?.message || 'Failed to add to wishlist');
@@ -22,7 +24,7 @@ export const addToWishlist = createAsyncThunk('wishlist/addToWishlist', async ({
 
 export const removeFromWishlist = createAsyncThunk('wishlist/removeFromWishlist', async (productId, { rejectWithValue }) => {
   try {
-    const res = await axios.delete('/api/wishlist', { data: { productId }, withCredentials: true });
+    const res = await axios.delete(`${API_URL}/api/wishlist`, { data: { productId }, withCredentials: true });
     return res.data;
   } catch (err) {
     return rejectWithValue(err.response?.data?.message || 'Failed to remove from wishlist');
@@ -31,7 +33,7 @@ export const removeFromWishlist = createAsyncThunk('wishlist/removeFromWishlist'
 
 export const clearWishlist = createAsyncThunk('wishlist/clearWishlist', async (_, { rejectWithValue }) => {
   try {
-    const res = await axios.delete('/api/wishlist/clear', { withCredentials: true });
+    const res = await axios.delete(`${API_URL}/api/wishlist/clear`, { withCredentials: true });
     return res.data;
   } catch (err) {
     return rejectWithValue(err.response?.data?.message || 'Failed to clear wishlist');

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import "./EditProductModal.css";
 import axios from 'axios';
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 const EditProductModal = ({ product, onClose, onUpdate }) => {
   const [formData, setFormData] = useState({
     name: "",
@@ -139,7 +141,7 @@ const EditProductModal = ({ product, onClose, onUpdate }) => {
         image: filteredImages[0] // Set the first image as the primary image
       };
 
-      const response = await axios.put(`/api/products/${product._id}`, productData);
+      const response = await axios.put(`${API_URL}/api/products/${product._id}`, productData);
       setSuccess("Product updated successfully!");
       onUpdate(response.data);
       onClose();
