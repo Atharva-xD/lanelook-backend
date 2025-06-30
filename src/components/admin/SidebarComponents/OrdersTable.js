@@ -16,7 +16,7 @@ const OrdersTable = ({ limit, refreshDashboard }) => {
   const fetchOrders = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('http://localhost:5000/api/orders', {
+      const response = await axios.get('/api/orders', {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -58,7 +58,7 @@ const OrdersTable = ({ limit, refreshDashboard }) => {
 
   const handleStatusChange = async (orderId, newStatus) => {
     try {
-      const response = await axios.put(`http://localhost:5000/api/orders/status/${orderId}`, 
+      const response = await axios.put(`/api/orders/status/${orderId}`, 
         { orderStatus: newStatus },
         {
           headers: {

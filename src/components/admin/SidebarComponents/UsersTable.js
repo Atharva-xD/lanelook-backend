@@ -31,7 +31,7 @@ const UsersTable = () => {
 
       console.log('Making API request with token:', token.substring(0, 20) + '...');
       
-      const response = await axios.get('http://localhost:5000/api/users', {
+      const response = await axios.get('/api/users', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -93,7 +93,7 @@ const UsersTable = () => {
       }
 
       const response = await axios.put(
-        `http://localhost:5000/api/users/${userId}`,
+        `/api/users/${userId}`,
         { role: newRole },
         {
           headers: {

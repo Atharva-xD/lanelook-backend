@@ -24,17 +24,17 @@ const AdminDashboard = () => {
       setLoading(true);
       // Fetch all required data in parallel
       const [usersRes, ordersRes, productsRes] = await Promise.all([
-        axios.get('http://localhost:5000/api/users', {
+        axios.get('/api/users', {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`
           }
         }),
-        axios.get('http://localhost:5000/api/orders', {
+        axios.get('/api/orders', {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`
           }
         }),
-        axios.get('http://localhost:5000/api/products', {
+        axios.get('/api/products', {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`
           }

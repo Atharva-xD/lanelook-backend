@@ -127,7 +127,7 @@ const Book = () => {
         products: formattedProducts
       });
 
-      const response = await fetch('http://localhost:5000/api/slots/book', {
+      const response = await fetch('/api/slots/book', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

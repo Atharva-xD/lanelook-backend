@@ -22,7 +22,7 @@ const ProductsTable = () => {
 
   const fetchProducts = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/products');
+      const response = await axios.get('/api/products');
       setProducts(response.data);
       setLoading(false);
     } catch (err) {
@@ -39,7 +39,7 @@ const ProductsTable = () => {
   // Function to update product details
   const handleUpdateProduct = async (updatedProduct) => {
     try {
-      const response = await axios.put(`http://localhost:5000/api/products/${updatedProduct._id}`, updatedProduct);
+      const response = await axios.put(`/api/products/${updatedProduct._id}`, updatedProduct);
       const updatedProducts = products.map((product) =>
         product._id === updatedProduct._id ? response.data : product
       );
