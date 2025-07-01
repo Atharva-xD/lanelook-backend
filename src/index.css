@@ -990,6 +990,17 @@ font-family: "Times New Roman", Times, serif;
     width: 60px;
     height: 60px;
   }
+  .wishlist-overlay {
+    max-width: 100%;
+  }
+  .wishlist-item .img {
+    width: 60px;
+    height: 60px;
+  }
+  .wishlist-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }
 
 /* Ensure footer stays at bottom */
