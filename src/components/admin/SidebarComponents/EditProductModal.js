@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./EditProductModal.css";
 import axios from 'axios';
+import { usePopup } from '../../../context/PopupContext';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -40,6 +41,7 @@ const EditProductModal = ({ product, onClose, onUpdate }) => {
   });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const { showPopup } = usePopup();
 
   useEffect(() => {
     if (product) {
@@ -131,7 +133,11 @@ const EditProductModal = ({ product, onClose, onUpdate }) => {
       const filteredImages = formData.images.filter(img => img.trim() !== "");
       
       if (filteredImages.length === 0) {
-        setError("At least one image is required");
+        showPopup({
+          type: 'error',
+          title: 'Validation Error',
+          message: 'At least one image is required',
+        });
         return;
       }
 
@@ -142,11 +148,30 @@ const EditProductModal = ({ product, onClose, onUpdate }) => {
       };
 
       const response = await axios.put(`${API_URL}/api/products/${product._id}`, productData);
-      setSuccess("Product updated successfully!");
-      onUpdate(response.data);
-      onClose();
+      const resData = response.data;
+      if (resData.status === 'success') {
+        showPopup({
+          type: 'success',
+          title: 'Success',
+          message: resData.message || 'Product updated successfully!',
+          autoClose: true
+        });
+        onUpdate(resData.data);
+        onClose();
+      } else {
+        showPopup({
+          type: 'error',
+          title: 'Error',
+          message: resData.message || 'Error updating product',
+        });
+      }
     } catch (err) {
-      setError(err.response?.data?.message || "Error updating product");
+      const resData = err.response?.data;
+      showPopup({
+        type: 'error',
+        title: 'Error',
+        message: resData?.message || err.message || 'Error updating product',
+      });
     }
   };
 
@@ -160,8 +185,7 @@ const EditProductModal = ({ product, onClose, onUpdate }) => {
           <button className="close-button" onClick={onClose}>&times;</button>
         </div>
         <div className="modal-body">
-          {error && <div className="error-message">{error}</div>}
-          {success && <div className="success-message">{success}</div>}
+          
 
           <form onSubmit={handleSubmit}>
             <div className="form-section">
