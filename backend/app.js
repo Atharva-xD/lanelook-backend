@@ -14,8 +14,8 @@ const app = express();
 
 // Middleware
 const allowedOrigins = [
-  // 'https://lanelook-backend.vercel.app', // Vercel frontend
-  'http://localhost:3000', // Uncomment for local development
+  'https://lanelook-backend.vercel.app', // Vercel frontend
+  // 'http://localhost:3000', // Uncomment for local development
 ];
 app.use(cors({
   origin: allowedOrigins,
