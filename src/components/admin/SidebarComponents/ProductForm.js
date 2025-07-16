@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import "./ProductForm.css";
 import axios from 'axios';
+import { usePopup } from '../../../context/PopupContext';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -41,6 +42,7 @@ const ProductForm = ({ onAddProduct }) => {
   });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const { showPopup } = usePopup();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -89,7 +91,11 @@ const ProductForm = ({ onAddProduct }) => {
       const filteredImages = formData.images.filter(img => img.trim() !== "");
       
       if (filteredImages.length === 0) {
-        setError("At least one image is required");
+        showPopup({
+          type: 'error',
+          title: 'Validation Error',
+          message: 'At least one image is required',
+        });
         return;
       }
 
@@ -100,54 +106,69 @@ const ProductForm = ({ onAddProduct }) => {
       };
 
       const response = await axios.post(`${API_URL}/api/products`, productData);
-      setSuccess("Product added successfully!");
-      onAddProduct(response.data);
-      
-      // Reset form fields
-      setFormData({
-        name: "",
-        description: "",
-        price: "",
-        image: "",
-        images: [""],
-        category: "",
-        about: "",
-        productId: "",
-        frameStyle: "",
-        modelNo: "",
-        frameWidth: "",
-        frameDimensions: "",
-        frameColour: "",
-        weight: "",
-        weightGroup: "",
-        material: "",
-        frameMaterial: "",
-        templeMaterial: "",
-        prescriptionType: "",
-        visionType: "",
-        frameStyleSecondary: "",
-        collection: "",
-        warranty: "",
-        gender: "",
-        height: "",
-        condition: "",
-        templeColour: "",
-        brandName: "",
-        productType: "",
-        frameType: "",
-        frameShape: ""
-      });
+      const resData = response.data;
+      if (resData.status === 'success') {
+        showPopup({
+          type: 'success',
+          title: 'Success',
+          message: resData.message || 'Product added successfully!',
+          autoClose: true
+        });
+        onAddProduct(resData.data);
+        // Reset form fields
+        setFormData({
+          name: "",
+          description: "",
+          price: "",
+          image: "",
+          images: [""],
+          category: "",
+          about: "",
+          productId: "",
+          frameStyle: "",
+          modelNo: "",
+          frameWidth: "",
+          frameDimensions: "",
+          frameColour: "",
+          weight: "",
+          weightGroup: "",
+          material: "",
+          frameMaterial: "",
+          templeMaterial: "",
+          prescriptionType: "",
+          visionType: "",
+          frameStyleSecondary: "",
+          collection: "",
+          warranty: "",
+          gender: "",
+          height: "",
+          condition: "",
+          templeColour: "",
+          brandName: "",
+          productType: "",
+          frameType: "",
+          frameShape: ""
+        });
+      } else {
+        showPopup({
+          type: 'error',
+          title: 'Error',
+          message: resData.message || 'Error adding product',
+        });
+      }
     } catch (err) {
-      setError(err.response?.data?.message || "Error adding product");
+      const resData = err.response?.data;
+      showPopup({
+        type: 'error',
+        title: 'Error',
+        message: resData?.message || err.message || 'Error adding product',
+      });
     }
   };
 
   return (
     <div className="product-form">
       <h4>Add New Product</h4>
-      {error && <div className="error-message">{error}</div>}
-      {success && <div className="success-message">{success}</div>}
-
       <form onSubmit={handleSubmit}>
         <div className="form-section">
           <h3>Basic Information</h3>
