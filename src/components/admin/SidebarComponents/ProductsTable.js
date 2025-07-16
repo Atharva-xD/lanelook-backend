@@ -42,8 +42,9 @@ const ProductsTable = () => {
   const handleUpdateProduct = async (updatedProduct) => {
     try {
       const response = await axios.put(`${API_URL}/api/products/${updatedProduct._id}`, updatedProduct);
+      const updatedProductData = response.data.data;
       const updatedProducts = products.map((product) =>
-        product._id === updatedProduct._id ? response.data : product
+        product._id === updatedProduct._id ? updatedProductData : product
       );
       setProducts(updatedProducts);
     } catch (err) {
@@ -155,7 +156,7 @@ const ProductsTable = () => {
         {isModalOpen && (
           <EditProductModal
             product={selectedProduct}
-            onUpdateProduct={handleUpdateProduct}
+            onUpdate={handleUpdateProduct}
             onClose={() => setIsModalOpen(false)}
           />
         )}
