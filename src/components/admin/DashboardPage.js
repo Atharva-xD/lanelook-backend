@@ -45,7 +45,7 @@ const AdminDashboard = () => {
 
       const users = usersRes.data;
       const orders = ordersRes.data;
-      const products = productsRes.data;
+      const products = (productsRes.data && productsRes.data.data) ? productsRes.data.data : (Array.isArray(productsRes.data) ? productsRes.data : []);
 
       // Calculate total sales
       const totalSales = orders.reduce((sum, order) => sum + order.totalPrice, 0);

@@ -2,6 +2,7 @@
 const Product = require('../models/Product');
 const asyncMiddleware = require('../utils/asyncMiddleware');
 const validation = require('../utils/validation');
+const { paginateHybrid } = require('../utils/pagination');
 
 const getProduct = asyncMiddleware(async (req, res) => {
   const product = await Product.findById(req.params.id)
@@ -16,8 +17,25 @@ const getProduct = asyncMiddleware(async (req, res) => {
 });
 
 const getProducts = asyncMiddleware(async (req, res) => {
-  const products = await Product.find();
-  res.json(products);
+  const baseFilter = {};
+  // Optional filters
+  if (req.query.category) baseFilter.category = req.query.category;
+  if (req.query.q) baseFilter.$text = { $search: req.query.q };
+
+  const result = await paginateHybrid({
+    model: Product,
+    baseFilter,
+    select: null,
+    populate: null,
+    query: req.query,
+  });
+
+  res.json({
+    status: 'success',
+    code: 200,
+    data: result.items,
+    pageInfo: result.pageInfo,
+  });
 });
 
 const addProduct = asyncMiddleware(async (req, res) => {

@@ -132,7 +132,8 @@ const productSchema = new mongoose.Schema({
     required: [true, 'Please provide frame shape']
   }
 }, {
-  timestamps: true
+  timestamps: true,
+  suppressReservedKeysWarning: true
 });
 
 productSchema.pre('save', function(next) {

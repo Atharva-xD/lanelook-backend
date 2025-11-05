@@ -7,10 +7,7 @@
        // Set the strictQuery option
        mongoose.set('strictQuery', true); // or false, depending on your preference
 
-       await mongoose.connect(config.DB_URI, {
-         useNewUrlParser: true,
-         useUnifiedTopology: true,
-       });
+       await mongoose.connect(config.DB_URI);
        console.log('MongoDB Connected...');
      } catch (error) {
        console.error('MongoDB connection error:', error);

@@ -25,7 +25,8 @@ const ProductsTable = () => {
   const fetchProducts = async () => {
     try {
       const response = await axios.get(`${API_URL}/api/products`);
-      setProducts(response.data);
+      const list = (response.data && response.data.data) ? response.data.data : (Array.isArray(response.data) ? response.data : []);
+      setProducts(list);
       setLoading(false);
     } catch (err) {
       setError("Error fetching products");

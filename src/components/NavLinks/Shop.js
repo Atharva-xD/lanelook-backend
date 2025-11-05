@@ -12,6 +12,12 @@ import ProductDetails from './ProductDetails';
 
 const Shop = () => {
   const [products, setProducts] = useState([]);
+  const [mode, setMode] = useState('page');
+  const [limit, setLimit] = useState(12);
+  const [page, setPage] = useState(1);
+  const [after, setAfter] = useState(null);
+  const [before, setBefore] = useState(null);
+  const [pageInfo, setPageInfo] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedPriceRange, setSelectedPriceRange] = useState("all");
   const [sortBy, setSortBy] = useState("default");
@@ -25,10 +31,31 @@ const Shop = () => {
 
   const fetchProducts = useCallback(async () => {
     try {
-      const response = await axios.get(`${API_URL}/api/products`);
-      setProducts(response.data);
+      const params = {
+        mode,
+        limit,
+      };
+      if (mode === 'page') {
+        params.page = page;
+      } else {
+        if (after) params.after = after;
+        if (before) params.before = before;
+      }
+      if (selectedCategory && selectedCategory !== 'all') params.category = selectedCategory;
+      if (sortBy === 'price-low') {
+        params.sortBy = 'price';
+        params.sortOrder = 'asc';
+      } else if (sortBy === 'price-high') {
+        params.sortBy = 'price';
+        params.sortOrder = 'desc';
+      }
+
+      const response = await axios.get(`${API_URL}/api/products`, { params });
+      const list = response.data.data || [];
+      setProducts(list);
+      setPageInfo(response.data.pageInfo || null);
       // Extract unique categories from products
-      const uniqueCategories = [...new Set(response.data.map(product => product.category))];
+      const uniqueCategories = [...new Set(list.map(product => product.category))];
       setCategories([
         { id: "all", name: "All Products" },
         ...uniqueCategories.map(cat => ({
@@ -39,11 +66,29 @@ const Shop = () => {
     } catch (error) {
       console.error('Error fetching products:', error);
     }
-  }, [API_URL]);
+  }, [API_URL, mode, limit, page, after, before, selectedCategory, sortBy]);
 
   useEffect(() => {
     fetchProducts();
   }, [fetchProducts]);
+
+  const handleNext = () => {
+    if (mode === 'page') {
+      if (pageInfo?.hasNextPage) setPage(p => p + 1);
+    } else if (pageInfo?.hasNextPage) {
+      setBefore(null);
+      setAfter(pageInfo.nextCursor || null);
+    }
+  };
+
+  const handlePrev = () => {
+    if (mode === 'page') {
+      if (pageInfo?.hasPrevPage) setPage(p => Math.max(1, p - 1));
+    } else if (pageInfo?.hasPrevPage) {
+      setAfter(null);
+      setBefore(pageInfo.prevCursor || null);
+    }
+  };
 
   const handleAddToCart = (product) => {
     if (!isAuthenticated()) {
@@ -70,10 +115,10 @@ const Shop = () => {
     { id: "over12000", name: "Over ₹12000" }
   ];
 
-  // Filter products based on selected category and price range
+  // Filter products based on selected price range (category handled on server)
   const filteredProducts = products.filter(product => {
     // Category filter
-    const categoryMatch = selectedCategory === "all" || product.category === selectedCategory;
+    const categoryMatch = true;
 
     // Price filter
     let priceMatch = true;
@@ -175,6 +220,44 @@ const Shop = () => {
                 <option value="price-high">Price: High to Low</option>
               </select>
             </div>
+
+            {/* Pagination Mode */}
+            <div className="filter-section">
+              <h4 className="filter-section-title">Pagination Mode</h4>
+              <select
+                className="sort-select"
+                value={mode}
+                onChange={(e) => {
+                  const nextMode = e.target.value;
+                  setMode(nextMode);
+                  setPage(1);
+                  setAfter(null);
+                  setBefore(null);
+                }}
+              >
+                <option value="page">Page</option>
+                <option value="cursor">Cursor</option>
+              </select>
+            </div>
+
+            {/* Page Size */}
+            <div className="filter-section">
+              <h4 className="filter-section-title">Items per page</h4>
+              <select
+                className="sort-select"
+                value={limit}
+                onChange={(e) => {
+                  setLimit(parseInt(e.target.value, 10));
+                  setPage(1);
+                  setAfter(null);
+                  setBefore(null);
+                }}
+              >
+                <option value={8}>8</option>
+                <option value={12}>12</option>
+                <option value={24}>24</option>
+              </select>
+            </div>
           </div>
 
           {/* Products Container */}
@@ -231,6 +314,18 @@ const Shop = () => {
                   </div>
                 </motion.div>
               ))}
+            </div>
+
+            {/* Pagination Controls */}
+            <div className="pagination-controls">
+              <button className="pagination-button" onClick={handlePrev} disabled={!pageInfo?.hasPrevPage}>Prev</button>
+              {mode === 'page' && (
+                <span className="pagination-info">Page {pageInfo?.page || page} of {pageInfo?.totalPages || 1}</span>
+              )}
+              {mode === 'cursor' && (
+                <span className="pagination-info">{pageInfo?.limit || limit} per page</span>
+              )}
+              <button className="pagination-button" onClick={handleNext} disabled={!pageInfo?.hasNextPage}>Next</button>
             </div>
 
             {/* Empty state */}
