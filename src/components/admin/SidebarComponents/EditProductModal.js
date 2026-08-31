@@ -39,8 +39,6 @@ const EditProductModal = ({ product, onClose, onUpdate }) => {
     frameType: "",
     frameShape: ""
   });
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
   const { showPopup } = usePopup();
 
   useEffect(() => {
@@ -125,8 +123,6 @@ const EditProductModal = ({ product, onClose, onUpdate }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
-    setSuccess("");
 
     try {
       // Filter out empty image URLs and ensure at least one image

@@ -52,13 +52,13 @@ const Signin = ({ close, onLogin }) => {
 
     setLoading(true);
     try {
-      console.log('Attempting login with:', { email });
+
       const response = await axios.post(`${API_URL}/api/auth/login`, {
         email,
         password
       });
 
-      console.log('Login response data:', JSON.stringify(response.data, null, 2));
+
 
       // Call the login function from AuthContext
       login(response.data);
@@ -84,7 +84,7 @@ const Signin = ({ close, onLogin }) => {
       setPassword('');
       setErrors({});
     } catch (error) {
-      console.error('Login error:', error.response?.data || error.message);
+
       setErrors({
         submit: error.response?.data?.message || 'An error occurred during sign in'
       });

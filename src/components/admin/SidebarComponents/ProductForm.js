@@ -40,8 +40,6 @@ const ProductForm = ({ onAddProduct }) => {
     frameType: "",
     frameShape: ""
   });
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
   const { showPopup } = usePopup();
 
   const handleChange = (e) => {
@@ -83,8 +81,6 @@ const ProductForm = ({ onAddProduct }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
-    setSuccess("");
 
     try {
       // Filter out empty image URLs and ensure at least one image

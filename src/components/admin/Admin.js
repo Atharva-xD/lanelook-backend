@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import AdminLayout from './AdminLayout';
 import DashboardPage from './DashboardPage';
 import OrdersTable from './SidebarComponents/OrdersTable';

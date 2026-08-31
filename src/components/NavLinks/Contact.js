@@ -10,8 +10,6 @@ import { usePopup } from "../../context/PopupContext";
 
 const Contact = () => {
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
-  const [submitted, setSubmitted] = useState(false);
-  const [errors, setErrors] = useState({}); // State to track form validation errors
   const form = useRef(); // Ref for the form to be used with EmailJS
   const { showSuccess, showError } = usePopup();
 
@@ -71,16 +69,16 @@ const Contact = () => {
     e.preventDefault();
     const validationErrors = validateForm();
     if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors); // Set errors if validation fails
+
     } else {
       try {
         // Send email using EmailJS
         emailjs.sendForm('service_kaszvw1', 'template_vegyi9n', form.current, 'veBJ3jhU_ONNTfYFX')
           .then((result) => {
-            console.log(result.text);
+
             showSuccess("Your message has been sent successfully!");
           }, (error) => {
-            console.log(error.text);
+
             showError("Failed to send message. Please try again later.");
           });
         setFormData({
@@ -88,8 +86,7 @@ const Contact = () => {
           email: "",
           message: "",
         });
-        setErrors({});
-        setSubmitted(true);
+
       } catch (error) {
         showError("Failed to send message. Please try again later.");
       }

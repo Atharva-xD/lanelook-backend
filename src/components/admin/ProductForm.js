@@ -95,10 +95,10 @@ const ProductForm = () => {
       };
 
       const response = await axios.post(`${API_URL}/api/products`, productData);
-      console.log('Product added successfully:', response.data);
+
       navigate('/admin/products');
     } catch (error) {
-      console.error('Error adding product:', error);
+
     }
   };
 

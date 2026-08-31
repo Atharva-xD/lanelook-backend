@@ -18,7 +18,7 @@ export const AuthProvider = ({ children }) => {
     if (storedUser && token) {
       try {
         const parsedUser = JSON.parse(storedUser);
-        console.log('Restoring user from storage:', parsedUser);
+
         setUser(parsedUser);
         // Set default authorization header
         axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
@@ -35,7 +35,7 @@ export const AuthProvider = ({ children }) => {
   }, [dispatch]);
 
   const login = (userData) => {
-    console.log('AuthContext login called with:', JSON.stringify(userData, null, 2));
+
     if (!userData || !userData.token) {
       console.error('Invalid user data received:', userData);
       return;
@@ -51,7 +51,7 @@ export const AuthProvider = ({ children }) => {
       token: userData.token
     };
 
-    console.log('Storing user data:', JSON.stringify(userToStore, null, 2));
+
     setUser(userToStore);
     localStorage.setItem('user', JSON.stringify(userToStore));
     localStorage.setItem('token', userData.token);
@@ -62,7 +62,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
-    console.log('Logging out user:', user);
+
     setUser(null);
     localStorage.removeItem('user');
     localStorage.removeItem('token');

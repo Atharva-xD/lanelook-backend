@@ -19,6 +19,7 @@ const UsersTable = () => {
       return;
     }
     fetchUsers();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchUsers = async () => {
@@ -31,7 +32,7 @@ const UsersTable = () => {
         return;
       }
 
-      console.log('Making API request with token:', token.substring(0, 20) + '...');
+
       
       const response = await axios.get(`${API_URL}/api/users`, {
         headers: {
@@ -39,7 +40,7 @@ const UsersTable = () => {
         }
       });
       
-      console.log('API Response:', response.data);
+
       
       // Sort users by date
       const sortedUsers = response.data
@@ -47,18 +48,7 @@ const UsersTable = () => {
       setUsers(sortedUsers);
       setError(null);
     } catch (err) {
-      console.error('Users fetch error details:', {
-        message: err.message,
-        status: err.response?.status,
-        statusText: err.response?.statusText,
-        data: err.response?.data,
-        headers: err.response?.headers,
-        config: {
-          url: err.config?.url,
-          method: err.config?.method,
-          headers: err.config?.headers
-        }
-      });
+
       
       if (err.response) {
         if (err.response.status === 401) {
@@ -110,7 +100,7 @@ const UsersTable = () => {
       ));
       setError(null);
     } catch (err) {
-      console.error('Error updating user role:', err);
+
       if (err.response) {
         if (err.response.status === 401) {
           setError('Your session has expired. Please log in again.');

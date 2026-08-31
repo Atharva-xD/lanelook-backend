@@ -1,5 +1,5 @@
 import React from 'react';
-import { FaUser, FaDollarSign, FaShoppingCart, FaBox } from 'react-icons/fa';
+import { FaUser, FaShoppingCart, FaBox } from 'react-icons/fa';
 import { FaArrowUp, FaArrowDown } from 'react-icons/fa';
 import { FaIndianRupeeSign } from 'react-icons/fa6';
 

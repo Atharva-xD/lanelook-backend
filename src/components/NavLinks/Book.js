@@ -62,13 +62,9 @@ const Book = () => {
     if (!time) errors.time = 'Time slot is required';
     if (!date) errors.date = 'Date is required';
     
-    // Debug logs
-    console.log('Selected Products:', selectedProducts);
-    console.log('Cart Items:', cartItems);
-    console.log('Product Info:', productInfo);
-    
+
     if (!selectedProducts || selectedProducts.length === 0) {
-      console.log('No products selected');
+
       errors.products = 'Please select at least one product';
     }
     return errors;
@@ -119,14 +115,7 @@ const Book = () => {
         };
       });
 
-      console.log('Sending booking request with data:', {
-        date,
-        time,
-        customerName: formData.from_name,
-        customerEmail: formData.from_email,
-        customerAddress: formData.address,
-        products: formattedProducts
-      });
+
 
       const response = await fetch(`${API_URL}/api/slots/book`, {
         method: 'POST',
@@ -151,10 +140,10 @@ const Book = () => {
       }
 
       const data = await response.json();
-      console.log('Backend response:', data);
+
 
       if (response.ok) {
-        console.log('Booking successful, sending email...');
+
         try {
           // Prepare EmailJS template parameters
           const templateParams = {
@@ -177,7 +166,7 @@ const Book = () => {
             'veBJ3jhU_ONNTfYFX'
           );
 
-          console.log('Email sent successfully');
+
           showPopup({
             type: 'success',
             title: 'Booking Confirmed',
@@ -198,7 +187,7 @@ const Book = () => {
             timeSlot: ''
           });
         } catch (emailError) {
-          console.error('Email sending error:', emailError);
+
           showPopup({
             type: 'error',
             title: 'Email Error',
@@ -209,7 +198,7 @@ const Book = () => {
         throw new Error(data.message || 'Failed to book appointment');
       }
     } catch (error) {
-      console.error('Booking error:', error);
+
       showPopup({
         type: 'error',
         title: 'Booking Error',

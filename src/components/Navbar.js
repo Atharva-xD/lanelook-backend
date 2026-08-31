@@ -59,10 +59,7 @@ const Navbar = () => {
     setActiveTab(newTab);
   }, [location.pathname]);
 
-  // Add debug logging
-  useEffect(() => {
-    console.log('Current user data:', user);
-  }, [user]);
+
 
   // Helper function to toggle body classes
   const toggleBodyClass = useCallback((className, shouldAdd) => {
